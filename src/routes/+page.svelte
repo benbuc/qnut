@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	let text = $state('Awaiting motion data...');
 	let x = 0,
 		y = 0,
@@ -33,14 +31,8 @@
 			text = `Error requesting motion permission: ${error}`;
 		}
 	}
-
-	onMount(() => {
-		if (typeof window !== 'undefined' && 'DeviceMotionEvent' in window) {
-			requestPermissionAndListen();
-		} else {
-			text = 'DeviceMotionEvent is not supported on this device.';
-		}
-	});
 </script>
 
 <pre>{text}</pre>
+
+<button onclick={requestPermissionAndListen}>Request Motion Permission</button>
