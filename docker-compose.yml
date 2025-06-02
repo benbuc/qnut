@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+    restart: unless-stopped
+    networks:
+      - default
+      - traefik-public
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.constraint-label=traefik-public
+      - traefik.http.routers.wheelcheck-proxy.rule=Host(`wheelcheck.benbuc.de`)
+      - traefik.http.routers.wheelcheck-proxy.tls=true
+      - traefik.http.routers.wheelcheck-proxy.tls.certresolver=le
+      - traefik.http.middlewares.wheelcheck-auth.basicauth.users=${BA_CREDENTIALS?Variable not set}
+      - traefik.http.routers.wheelcheck-proxy.middlewares=wheelcheck-auth
+
+networks:
+  traefik-public:
+    external: true
