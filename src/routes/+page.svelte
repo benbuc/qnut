@@ -10,6 +10,7 @@
 			y = event.accelerationIncludingGravity.y ?? 0;
 			z = event.accelerationIncludingGravity.z ?? 0;
 			text = `x: ${x.toFixed(2)}\ny: ${y.toFixed(2)}\nz: ${z.toFixed(2)}`;
+			text += `\nInterval: ${event.interval} ms`;
 		}
 	}
 
