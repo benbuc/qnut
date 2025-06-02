@@ -1,41 +1,44 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	let text = $state('');
-
+	let text = $state('Awaiting motion data...');
 	let x = 0,
 		y = 0,
 		z = 0;
-	let sensor: Accelerometer;
+
+	function handleMotion(event: DeviceMotionEvent) {
+		if (event.accelerationIncludingGravity) {
+			x = event.accelerationIncludingGravity.x ?? 0;
+			y = event.accelerationIncludingGravity.y ?? 0;
+			z = event.accelerationIncludingGravity.z ?? 0;
+			text = `x: ${x.toFixed(2)}\ny: ${y.toFixed(2)}\nz: ${z.toFixed(2)}`;
+		}
+	}
+
+	async function requestPermissionAndListen() {
+		try {
+			// iOS 13+ requires permission to access devicemotion
+			// @ts-ignore - iOS-specific
+			if (typeof DeviceMotionEvent.requestPermission === 'function') {
+				// @ts-ignore - iOS-specific
+				const response = await DeviceMotionEvent.requestPermission();
+				if (response !== 'granted') {
+					text = 'Permission denied to access motion sensors.';
+					return;
+				}
+			}
+
+			window.addEventListener('devicemotion', handleMotion, true);
+		} catch (error) {
+			text = `Error requesting motion permission: ${error}`;
+		}
+	}
 
 	onMount(() => {
-		try {
-			if ('Accelerometer' in window) {
-				sensor = new Accelerometer({ frequency: 60 });
-
-				sensor.addEventListener('reading', () => {
-					x = sensor.x ?? 0;
-					y = sensor.y ?? 0;
-					z = sensor.z ?? 0;
-					text = `x: ${x.toFixed(2)}\ny: ${y.toFixed(2)}\nz: ${z.toFixed(2)}`;
-				});
-
-				sensor.addEventListener('error', (event) => {
-					if (event.error.name === 'NotAllowedError') {
-						text = 'Permission to access sensor was denied.';
-					} else if (event.error.name === 'NotReadableError') {
-						text = 'Cannot connect to the sensor.';
-					} else {
-						text = `Sensor error: ${event.error.name}`;
-					}
-				});
-
-				sensor.start();
-			} else {
-				text = 'Accelerometer not supported on this device.';
-			}
-		} catch (error) {
-			text = `Error initializing sensor: ${error}`;
+		if (typeof window !== 'undefined' && 'DeviceMotionEvent' in window) {
+			requestPermissionAndListen();
+		} else {
+			text = 'DeviceMotionEvent is not supported on this device.';
 		}
 	});
 </script>
