@@ -6,6 +6,8 @@ services:
     networks:
       - default
       - traefik-public
+    volumes:
+      - ./logs:/app/static/logs
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
