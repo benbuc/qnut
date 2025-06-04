@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import FFT from 'fft.js';
-	import colormap from 'colormap';
+	import { drawSpectrogram, getSpeedBucket, generateTestData } from '$lib/spectrogram';
 
 	const bufferSize = 128;
 	const fft = new FFT(bufferSize);
@@ -19,11 +19,6 @@
 	let geoWatchId: number | null = null;
 	let errorMsg = $state('');
 	let warningMsg = $state('');
-
-	function getSpeedBucket(speed: number, step = 5): string {
-		const bucket = Math.floor(speed / step) * step;
-		return `${bucket}-${bucket + step}`;
-	}
 
 	function handleMotion(event: DeviceMotionEvent) {
 		const acc = event.acceleration;
@@ -51,161 +46,10 @@
 				if (!speedBuckets.has(bucket)) speedBuckets.set(bucket, []);
 				speedBuckets.get(bucket)!.push(magnitudes);
 				buffer = [];
-				drawSpectrogram();
+
+				// Call our refactored drawing function
+				drawSpectrogram(canvas, speedBuckets, bufferSize);
 			}
-		}
-	}
-
-	function drawSpectrogram() {
-		const width = canvas.width;
-		const height = canvas.height;
-		ctx.clearRect(0, 0, width, height);
-		const barWidth = width / (bufferSize / 2);
-		// Check if there are any keys before trying to get the max
-		if (speedBuckets.size === 0) {
-			console.log('No speed data available yet');
-			return;
-		}
-		const maxSpeed = Math.max(
-			...Array.from(speedBuckets.keys()).map((key) => parseInt(key.split('-')[0]))
-		);
-		console.log('Max speed:', maxSpeed);
-		// Ensure we don't divide by zero
-		const speedScale = maxSpeed > 0 ? height / maxSpeed : 1;
-
-		// Precompute mean spectra for each bucket
-		const meanSpectra: { mean: number[]; bucketRange: number[] }[] = [];
-		for (const [bucket, spectra] of speedBuckets.entries()) {
-			const mean = spectra.reduce(
-				(acc, spectrum) => {
-					spectrum.forEach((value, index) => {
-						acc[index] = (acc[index] || 0) + value / spectra.length;
-					});
-					return acc;
-				},
-				new Array(bufferSize / 2).fill(0)
-			);
-			meanSpectra.push({ mean, bucketRange: bucket.split('-').map(Number) });
-		}
-
-		// Compute global min/max (ignoring first 10%)
-		const ignoreCount = Math.floor((bufferSize / 2) * 0.1);
-		const allValues = meanSpectra.flatMap((obj) => obj.mean.slice(ignoreCount));
-		const minSpectrum = Math.min(...allValues);
-		const maxSpectrum = Math.max(...allValues);
-
-		// DEBUG: Draw a background to see if canvas is working
-		ctx.fillStyle = 'rgba(240, 240, 240, 0.5)';
-		ctx.fillRect(0, 0, width, height);
-
-		// Draw a grid for reference
-		ctx.strokeStyle = 'rgba(200, 200, 200, 0.3)';
-		for (let i = 0; i < height; i += height / 10) {
-			ctx.beginPath();
-			ctx.moveTo(0, i);
-			ctx.lineTo(width, i);
-			ctx.stroke();
-		}
-
-		// Draw speed buckets visualization
-		console.log(`Total speed buckets: ${meanSpectra.length}`);
-
-		// Sort buckets by speed for proper display
-		meanSpectra.sort((a, b) => a.bucketRange[0] - b.bucketRange[0]);
-
-		// Instead of using speed to calculate positions directly,
-		// divide the canvas height evenly among the available buckets
-		const availableBuckets = meanSpectra.length;
-		const rowHeight = height / Math.max(availableBuckets, 5); // Ensure minimum divisions
-
-		// Draw labels for speed ranges on the left side
-		ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-		ctx.font = '10px Arial';
-
-		meanSpectra.forEach((spectra, index) => {
-			// Get speed bucket info
-			const minBucketSpeed = spectra.bucketRange[0];
-			const maxBucketSpeed = spectra.bucketRange[1];
-			console.log(`Processing speed bucket ${minBucketSpeed}-${maxBucketSpeed}`);
-
-			// Draw speed label
-			ctx.fillText(
-				`${minBucketSpeed}-${maxBucketSpeed} km/h`,
-				5,
-				height - index * rowHeight - rowHeight / 2
-			);
-		});
-
-		// Now draw the actual spectral data
-		meanSpectra.forEach((spectra, index) => {
-			const mean = spectra.mean;
-			const minBucketSpeed = spectra.bucketRange[0];
-			const maxBucketSpeed = spectra.bucketRange[1];
-
-			// Calculate row position (from bottom, with index 0 at the bottom)
-			// This distributes the rows evenly across the canvas height
-			const y = height - (index + 1) * rowHeight;
-			const bucketHeight = rowHeight * 0.9; // Leave small gap between rows
-
-			console.log(
-				`Drawing bucket ${minBucketSpeed}-${maxBucketSpeed} at y=${y} with height=${bucketHeight}`
-			);
-
-			// Draw the frequency data
-			for (let i = 0; i < mean.length; i++) {
-				const magnitude = mean[i];
-
-				// Skip if no data or first few frequency bins (often just noise)
-				if (isNaN(magnitude) || i < 2) continue;
-
-				let norm = (magnitude - minSpectrum) / (maxSpectrum - minSpectrum);
-				norm = Math.max(0, Math.min(1, norm));
-
-				const color = viridisColor(norm);
-				ctx.fillStyle = color;
-
-				// Ensure we're drawing within canvas bounds
-				if (y >= 0 && y + bucketHeight <= height) {
-					ctx.fillRect(i * barWidth, y, barWidth, bucketHeight);
-				}
-
-				// Limit logging to avoid console spam
-				if (i % 20 === 0) {
-					console.log(
-						`Drawing bar at x=${i * barWidth}, y=${y}, width=${barWidth}, height=${bucketHeight}, color=${color}`
-					);
-				}
-			}
-		});
-	}
-
-	// Precompute Viridis colormap
-	const viridisColors = colormap({
-		colormap: 'viridis',
-		nshades: 256,
-		format: 'rgb', // Use rgb format for simplicity
-		alpha: 1
-	});
-
-	function viridisColor(t: number): string {
-		try {
-			t = Math.max(0, Math.min(1, t));
-			const idx = Math.round(t * 255);
-			if (idx < 0 || idx >= viridisColors.length) {
-				console.warn(`Invalid color index: ${idx}, using fallback`);
-				return 'rgba(0, 0, 255, 0.7)'; // Fallback color
-			}
-			const color = viridisColors[idx];
-			// Handle both array and string formats that colormap might return
-			if (Array.isArray(color)) {
-				return `rgba(${color[0]},${color[1]},${color[2]},0.7)`;
-			} else {
-				// If it's already a string, just use it
-				return color;
-			}
-		} catch (e) {
-			console.error('Error in viridisColor:', e);
-			return 'rgba(0, 0, 255, 0.7)'; // Fallback color if something goes wrong
 		}
 	}
 
@@ -243,8 +87,13 @@
 
 	async function requestPermissionAndListen() {
 		try {
-			if (typeof DeviceMotionEvent.requestPermission === 'function') {
-				const response = await DeviceMotionEvent.requestPermission();
+			// Use type assertion to handle iOS-specific API
+			const DeviceMotionEventWithPermission = window.DeviceMotionEvent as unknown as {
+				requestPermission?: () => Promise<string>;
+			};
+
+			if (typeof DeviceMotionEventWithPermission.requestPermission === 'function') {
+				const response = await DeviceMotionEventWithPermission.requestPermission();
 				if (response !== 'granted') {
 					errorMsg = 'Permission denied to access motion sensors.';
 					measuring = false;
@@ -256,9 +105,9 @@
 			geoWatchId = navigator.geolocation.watchPosition(
 				(pos) => {
 					if (pos.coords.speed !== undefined && pos.coords.speed !== null) {
-						currentSpeed = Math.max(0, pos.coords.speed * 3.6) + 15;
+						currentSpeed = Math.max(0, pos.coords.speed * 3.6);
 					} else {
-						currentSpeed = 15;
+						currentSpeed = -1;
 						warningMsg = 'Speed data is not available from your device.';
 					}
 				},
@@ -289,43 +138,14 @@
 
 		// Add some testing data for development
 		if (!measuring && speedBuckets.size === 0) {
-			console.log('Adding test data for visualization');
-			// Create sample data for testing - cover a wide range of speeds
-			const testSpeeds = [15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
-			testSpeeds.forEach((speed) => {
-				const bucket = getSpeedBucket(speed);
-				const testData = [];
-				// Generate some fake FFT data
-				for (let i = 0; i < 5; i++) {
-					const fakeSpectrum = Array(bufferSize / 2)
-						.fill(0)
-						.map((_, i) => {
-							// Create different frequency patterns based on speed
-							// Simulate different resonances at different speeds
-							let value = 0;
-
-							// Main peak that changes with speed (simulates wheel resonance)
-							value += (Math.exp(-Math.pow(i - speed / 3, 2) / 50) * speed) / 8;
-
-							// Secondary peaks (simulates other vibration sources)
-							if (speed > 35) {
-								value += (Math.exp(-Math.pow(i - 15, 2) / 10) * (speed - 30)) / 20;
-							}
-
-							// High frequency noise (increases with speed)
-							if (i > 30) {
-								value += (Math.random() * 0.4 + 0.1) * (speed / 60);
-							}
-
-							return value;
-						});
-					testData.push(fakeSpectrum);
-				}
-				speedBuckets.set(bucket, testData);
+			// Use our refactored function to generate test data
+			const testBuckets = generateTestData(bufferSize);
+			testBuckets.forEach((value: number[][], key: string) => {
+				speedBuckets.set(key, value);
 			});
 
 			// Draw the test visualization
-			drawSpectrogram();
+			drawSpectrogram(canvas, speedBuckets, bufferSize);
 		}
 	});
 
