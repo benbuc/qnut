@@ -103,7 +103,8 @@ export function drawSpectrogram(
 	// Instead of using speed to calculate positions directly,
 	// divide the canvas height evenly among the available buckets
 	const availableBuckets = meanSpectra.length;
-	const rowHeight = height / Math.max(availableBuckets, 5); // Ensure minimum divisions
+	// Add a slight overlap to prevent gaps between rows
+	const rowHeight = height / Math.max(availableBuckets, 5) + 0.5; // Ensure minimum divisions
 
 	// Now draw the actual spectral data without gaps between rows
 	meanSpectra.forEach((spectra, index) => {
@@ -111,8 +112,8 @@ export function drawSpectrogram(
 
 		// Calculate row position (from bottom, with index 0 at the bottom)
 		// This distributes the rows evenly across the canvas height without gaps
-		const y = height - (index + 1) * rowHeight;
-		const bucketHeight = rowHeight; // No gap between rows
+		const y = Math.floor(height - (index + 1) * rowHeight);
+		const bucketHeight = Math.ceil(rowHeight); // Use Math.ceil to prevent sub-pixel gaps
 
 		// Draw the frequency data
 		for (let i = 0; i < mean.length; i++) {
@@ -129,7 +130,7 @@ export function drawSpectrogram(
 
 			// Ensure we're drawing within canvas bounds
 			if (y >= 0 && y + bucketHeight <= height) {
-				// Use Math.ceil to prevent sub-pixel rendering gaps
+				// Use Math.ceil to prevent sub-pixel rendering gaps in both directions
 				ctx.fillRect(Math.floor(i * barWidth), y, Math.ceil(barWidth), bucketHeight);
 			}
 		}
