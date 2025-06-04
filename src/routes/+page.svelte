@@ -6,7 +6,6 @@
 	let ctx: CanvasRenderingContext2D;
 
 	const bufferSize = 128; // Number of samples per FFT
-	const historySize = 50; // Number of FFT rows to keep
 
 	let text = $state('init');
 
@@ -63,18 +62,7 @@
 		const width = canvas.width;
 		const height = canvas.height;
 		ctx.clearRect(0, 0, width, height);
-		/*const barWidth = width / (bufferSize / 2);
-		const rowHeight = height / historySize;
 
-		for (let row = 0; row < spectrogram.length; row++) {
-			const spectrum = spectrogram[row];
-			for (let i = 0; i < spectrum.length; i++) {
-				const magnitude = spectrum[i];
-				const intensity = Math.min(255, Math.log1p(magnitude) * 32);
-				ctx.fillStyle = `rgb(${intensity}, ${intensity}, ${intensity})`;
-				ctx.fillRect(i * barWidth, row * rowHeight, barWidth, rowHeight);
-			}
-		}*/
 		const barWidth = width / (bufferSize / 2);
 		const maxSpeed = Math.max(
 			...Array.from(speedBuckets.keys()).map((key) => parseInt(key.split('-')[0]))
@@ -95,14 +83,16 @@
 				new Array(bufferSize / 2).fill(0)
 			);
 			const rowIndex = Math.floor(bucketRange[0] / 5); // Assuming step of 5 for speed buckets
-			const rowHeight = height / historySize;
-			const minSpectrum = Math.min(...meanSpectrum);
-			const maxSpectrum = Math.max(...meanSpectrum);
+			const rowHeight = height / (maxSpeed / 5);
+			// ignore the first 10% of the spectrum for better visualization
+			const ignoreCount = Math.floor(meanSpectrum.length * 0.1);
+			const minSpectrum = Math.min(...meanSpectrum.slice(ignoreCount));
+			const maxSpectrum = Math.max(...meanSpectrum.slice(ignoreCount));
 			for (let i = 0; i < meanSpectrum.length; i++) {
 				const magnitude = meanSpectrum[i];
 				//const intensity = Math.min(255, Math.log1p(magnitude) * 32);
-				const intensity =
-					255 - Math.floor(((magnitude - minSpectrum) / (maxSpectrum - minSpectrum)) * 255);
+				let intensity = Math.floor(((magnitude - minSpectrum) / (maxSpectrum - minSpectrum)) * 255);
+				intensity = Math.max(0, Math.min(255, intensity)); // Clamp to [0, 255]
 				ctx.fillStyle = `rgb(${intensity}, ${intensity}, ${intensity})`;
 				ctx.fillRect(i * barWidth, rowIndex * rowHeight, barWidth, bucketHeight);
 			}
