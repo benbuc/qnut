@@ -10,6 +10,7 @@
 	let ctx: CanvasRenderingContext2D;
 	let buffer: number[] = [];
 	let currentSpeed = $state(-1);
+	let text = $state('');
 
 	const speedBuckets: Map<string, number[][]> = new Map();
 
@@ -28,6 +29,7 @@
 		const acc = event.acceleration;
 		if (acc && acc.x !== null && acc.y !== null && acc.z !== null) {
 			const magnitude = Math.sqrt(acc.x ** 2 + acc.y ** 2 + acc.z ** 2);
+			text = `Acceleration: x=${acc.x.toFixed(2)}, y=${acc.y.toFixed(2)}, z=${acc.z.toFixed(2)}, magnitude=${magnitude.toFixed(2)}`;
 			buffer.push(magnitude);
 			if (buffer.length >= bufferSize) {
 				if (currentSpeed < 0) {
@@ -243,3 +245,6 @@
 	class="mx-auto mt-6 block rounded border border-slate-200 shadow-lg"
 	style="max-width: 100%; width: 400px; height: 300px;"
 ></canvas>
+<div class="mt-4 rounded bg-slate-50 px-4 py-2 text-center text-base text-slate-700 shadow">
+	{text}
+</div>
