@@ -23,35 +23,40 @@
 
 	function handleMotion(event: DeviceMotionEvent) {
 		const acc = event.acceleration;
-		if (acc && acc.x !== null && acc.y !== null && acc.z !== null) {
-			const magnitude = Math.sqrt(acc.x ** 2 + acc.y ** 2 + acc.z ** 2);
-			text = `Acceleration: x=${acc.x.toFixed(2)}, y=${acc.y.toFixed(2)}, z=${acc.z.toFixed(2)}, magnitude=${magnitude.toFixed(2)}`;
-			buffer.push(magnitude);
-			if (buffer.length >= bufferSize) {
-				if (currentSpeed < 0) {
-					buffer = [];
-					return;
-				}
-				const windowed = buffer.map(
-					(val, i) => val * (0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (bufferSize - 1)))
-				);
-				const input = new Array(bufferSize).fill(0);
-				const output = new Array(bufferSize);
-				for (let i = 0; i < bufferSize; i++) input[i] = windowed[i];
-				fft.realTransform(output, input);
-				fft.completeSpectrum(output);
-				const magnitudes = output
-					.slice(0, bufferSize / 2)
-					.map((v, i) => Math.sqrt(output[2 * i] ** 2 + output[2 * i + 1] ** 2));
-				const bucket = getSpeedBucket(currentSpeed);
-				if (!speedBuckets.has(bucket)) speedBuckets.set(bucket, []);
-				speedBuckets.get(bucket)!.push(magnitudes);
-				buffer = [];
+		if (!acc || acc.x === null || acc.y === null || acc.z === null) return;
 
-				// Call our refactored drawing function
-				drawSpectrogram(canvas, speedBuckets, bufferSize);
-			}
+		const magnitude = Math.sqrt(acc.x ** 2 + acc.y ** 2 + acc.z ** 2);
+		text = `Acceleration: x=${acc.x.toFixed(2)}, y=${acc.y.toFixed(2)}, z=${acc.z.toFixed(2)}, magnitude=${magnitude.toFixed(2)}`;
+		buffer.push(magnitude);
+
+		if (buffer.length < bufferSize) return;
+		if (currentSpeed < 0) {
+			buffer = [];
+			return;
 		}
+
+		const windowed = buffer.map(
+			(val, i) => val * (0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (bufferSize - 1)))
+		);
+
+		const input = new Array(bufferSize).fill(0);
+		const output = new Array(bufferSize);
+
+		for (let i = 0; i < bufferSize; i++) input[i] = windowed[i];
+
+		fft.realTransform(output, input);
+		fft.completeSpectrum(output);
+
+		const magnitudes = output
+			.slice(0, bufferSize / 2)
+			.map((v, i) => Math.sqrt(output[2 * i] ** 2 + output[2 * i + 1] ** 2));
+
+		const bucket = getSpeedBucket(currentSpeed);
+		if (!speedBuckets.has(bucket)) speedBuckets.set(bucket, []);
+		speedBuckets.get(bucket)!.push(magnitudes);
+		buffer = [];
+
+		drawSpectrogram(canvas, speedBuckets, bufferSize);
 	}
 
 	function resetErrors() {
@@ -62,24 +67,29 @@
 	function startMeasuring() {
 		if (measuring) return;
 		resetErrors();
+
 		if (!('geolocation' in navigator)) {
 			errorMsg = 'Geolocation API is not available on this device.';
 			return;
 		}
+
 		if (typeof window.DeviceMotionEvent === 'undefined') {
 			errorMsg = 'DeviceMotion API is not available on this device.';
 			return;
 		}
+
 		measuring = true;
 		requestPermissionAndListen();
 	}
 
 	function stopMeasuring() {
 		measuring = false;
+
 		if (motionListenerActive) {
 			window.removeEventListener('devicemotion', handleMotion);
 			motionListenerActive = false;
 		}
+
 		if (geoWatchId !== null) {
 			navigator.geolocation.clearWatch(geoWatchId);
 			geoWatchId = null;
@@ -88,7 +98,6 @@
 
 	async function requestPermissionAndListen() {
 		try {
-			// Use type assertion to handle iOS-specific API
 			const DeviceMotionEventWithPermission = window.DeviceMotionEvent as unknown as {
 				requestPermission?: () => Promise<string>;
 			};
@@ -101,8 +110,10 @@
 					return;
 				}
 			}
+
 			window.addEventListener('devicemotion', handleMotion, true);
 			motionListenerActive = true;
+
 			geoWatchId = navigator.geolocation.watchPosition(
 				(pos) => {
 					if (pos.coords.speed !== undefined && pos.coords.speed !== null) {
@@ -128,26 +139,39 @@
 		}
 	}
 
-	onMount(() => {
+	function initCanvas() {
+		if (!canvas) return;
 		ctx = canvas.getContext('2d')!;
-		canvas.width = 400;
-		canvas.height = 300;
+		canvas.width = canvas.clientWidth;
+		canvas.height = canvas.clientHeight;
 
-		// Draw initial canvas with background to verify it's working
-		ctx.fillStyle = 'rgba(240, 240, 240, 0.5)';
+		ctx.fillStyle = '#f8fafc';
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-		// Add some testing data for development
-		if (!measuring && speedBuckets.size === 0 && dev) {
-			// Use our refactored function to generate test data
-			const testBuckets = generateTestData(bufferSize);
-			testBuckets.forEach((value: number[][], key: string) => {
-				speedBuckets.set(key, value);
-			});
-
-			// Draw the test visualization
+		if (speedBuckets.size > 0) {
 			drawSpectrogram(canvas, speedBuckets, bufferSize);
 		}
+	}
+
+	onMount(() => {
+		initCanvas();
+
+		if (dev) {
+			const testBuckets = generateTestData(bufferSize);
+			for (const [key, value] of testBuckets.entries()) {
+				speedBuckets.set(key, value);
+			}
+			drawSpectrogram(canvas, speedBuckets, bufferSize);
+		}
+
+		const handleResize = () => {
+			if (canvas) {
+				initCanvas();
+			}
+		};
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
 	});
 
 	onDestroy(stopMeasuring);
@@ -168,39 +192,44 @@
 	</div>
 {/if}
 
-<div
-	class="mb-6 rounded border-l-4 border-blue-600 bg-blue-50 p-4 text-base text-slate-800 shadow-sm"
->
-	<strong>WheelCheck</strong> helps you measure and visualize imbalances in your car's tires using
-	your phone's sensors.<br />
-	Place your phone securely on the car floor or seat, then press <b>Start Measuring</b> when ready.
+<div class="mb-4 rounded bg-blue-50 p-4 shadow-sm">
+	<p class="mb-2">
+		<strong>WheelCheck</strong> helps you visualize wheel imbalances using your phone's sensors.
+	</p>
+	<p>Place your phone securely in your car and press Start when ready.</p>
 </div>
-<div
-	class="mb-6 flex items-center gap-2 rounded border-l-4 border-red-600 bg-red-50 p-4 font-semibold text-red-800 shadow-sm"
->
-	<span class="text-2xl">⚠️</span> <b>Do not use this app while driving!</b> Only operate when the car
-	is safely stopped or with a passenger.
+
+<div class="mb-6 flex gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+	<span class="text-xl">⚠️</span> <b>Safety first!</b> Only use with a passenger operating the app.
 </div>
-<div class="mb-4 text-center text-3xl font-bold text-blue-600">
-	Speed: {currentSpeed >= 0 ? `${currentSpeed.toFixed(1)} km/h` : 'N/A'}
+
+<div class="mb-4 rounded-lg bg-white p-4 shadow-sm">
+	<div class="mb-2 text-center text-2xl font-bold text-blue-600">
+		{currentSpeed >= 0 ? `${currentSpeed.toFixed(1)} km/h` : 'Not measuring'}
+	</div>
+
+	<div class="flex items-center justify-center gap-4">
+		<button
+			class="rounded-lg bg-blue-600 px-5 py-2 font-bold text-white shadow transition hover:bg-blue-700 disabled:opacity-50"
+			onclick={startMeasuring}
+			disabled={measuring}>Start</button
+		>
+		<button
+			class="rounded-lg bg-slate-200 px-5 py-2 font-bold text-slate-700 shadow transition hover:bg-slate-300 disabled:opacity-50"
+			onclick={stopMeasuring}
+			disabled={!measuring}>Stop</button
+		>
+	</div>
 </div>
-<div class="mb-6 flex items-center justify-center gap-4">
-	<button
-		class="rounded bg-blue-600 px-6 py-2 text-lg font-semibold text-white shadow transition hover:bg-blue-700 disabled:bg-slate-300 disabled:text-slate-400"
-		onclick={startMeasuring}
-		disabled={measuring}>Start Measuring</button
-	>
-	<button
-		class="rounded bg-slate-200 px-6 py-2 text-lg font-semibold text-slate-700 shadow transition hover:bg-slate-300 disabled:bg-slate-100 disabled:text-slate-400"
-		onclick={stopMeasuring}
-		disabled={!measuring}>Stop Measuring</button
-	>
-</div>
+
 <canvas
 	bind:this={canvas}
-	class="mx-auto mt-6 block rounded border border-slate-200 shadow-lg"
-	style="max-width: 100%; width: 400px; height: 300px;"
+	class="mx-auto w-full rounded border border-slate-100 shadow-md"
+	style="height: 300px;"
 ></canvas>
-<div class="mt-4 rounded bg-slate-50 px-4 py-2 text-center text-base text-slate-700 shadow">
-	{text}
-</div>
+
+{#if measuring}
+	<div class="mt-3 rounded bg-slate-50 p-3 text-center text-sm text-slate-600">
+		{text}
+	</div>
+{/if}
