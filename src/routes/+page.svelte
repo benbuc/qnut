@@ -2,6 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import FFT from 'fft.js';
 	import { drawSpectrogram, getSpeedBucket, generateTestData } from '$lib/spectrogram';
+	import { dev } from '$app/environment';
 
 	const bufferSize = 128;
 	const fft = new FFT(bufferSize);
@@ -137,7 +138,7 @@
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 		// Add some testing data for development
-		if (!measuring && speedBuckets.size === 0) {
+		if (!measuring && speedBuckets.size === 0 && dev) {
 			// Use our refactored function to generate test data
 			const testBuckets = generateTestData(bufferSize);
 			testBuckets.forEach((value: number[][], key: string) => {
