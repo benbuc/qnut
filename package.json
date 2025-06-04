@@ -21,6 +21,7 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/typography": "^0.5.15",
 		"@tailwindcss/vite": "^4.0.0",
+		"@types/colormap": "^2.3.4",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^3.0.0",
@@ -41,6 +42,7 @@
 		]
 	},
 	"dependencies": {
+		"colormap": "^2.3.2",
 		"fft.js": "^4.0.4"
 	}
 }
