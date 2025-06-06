@@ -75,8 +75,7 @@ export function drawSpectrogram(
 
 	meanSpectra.forEach((spectra, index) => {
 		const mean = spectra.mean;
-		const y = Math.floor(height - (index + 1) * rowHeight);
-		const bucketHeight = Math.ceil(rowHeight + 0.5);
+		const y = height - (index + 1) * rowHeight;
 
 		for (let i = 0; i < mean.length; i++) {
 			const magnitude = mean[i];
@@ -87,8 +86,13 @@ export function drawSpectrogram(
 
 			ctx.fillStyle = viridisColor(norm);
 
-			if (y >= 0 && y + bucketHeight <= height) {
-				ctx.fillRect(Math.floor(i * barWidth), y, Math.ceil(barWidth), bucketHeight);
+			if (y >= 0 && y + rowHeight <= height) {
+				ctx.fillRect(
+					Math.floor(i * barWidth),
+					Math.floor(y),
+					Math.ceil(barWidth),
+					Math.ceil(rowHeight + 0.5)
+				);
 			}
 		}
 	});
@@ -119,8 +123,9 @@ export function drawSpectrogram(
 }
 
 export function generateTestData(bufferSize: number): Map<string, number[][]> {
+	// generate idealized representation of what to look out for in the spectrogram
 	const speedBuckets = new Map<string, number[][]>();
-	const testSpeeds = [0, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+	const testSpeeds = [...Array.from({ length: 32 }, (_, i) => i * 5)];
 
 	testSpeeds.forEach((speed) => {
 		const bucket = getSpeedBucket(speed);
@@ -131,15 +136,9 @@ export function generateTestData(bufferSize: number): Map<string, number[][]> {
 				.fill(0)
 				.map((_, i) => {
 					let value = 0;
-					value += (Math.exp(-Math.pow(i - speed / 3, 2) / 50) * speed) / 8;
+					value += Math.exp(-Math.pow(i - speed / 3, 2) / 5) * Math.pow(speed, 2);
 
-					if (speed > 35) {
-						value += (Math.exp(-Math.pow(i - 15, 2) / 10) * (speed - 30)) / 20;
-					}
-
-					if (i > 30) {
-						value += (Math.random() * 0.4 + 0.1) * (speed / 60);
-					}
+					value += Math.random() * 5000;
 
 					return value;
 				});

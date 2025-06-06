@@ -117,6 +117,7 @@
 				(pos) => {
 					if (pos.coords.speed !== undefined && pos.coords.speed !== null) {
 						currentSpeed = Math.max(0, pos.coords.speed * 3.6);
+						warningMsg = '';
 					} else {
 						currentSpeed = -1;
 						warningMsg = 'Speed data is not available from your device.';
