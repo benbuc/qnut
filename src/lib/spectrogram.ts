@@ -71,16 +71,16 @@ export function drawSpectrogram(
 	meanSpectra.sort((a, b) => a.bucketRange[0] - b.bucketRange[0]);
 
 	const availableBuckets = meanSpectra.length;
-	const rowHeight = height / Math.max(availableBuckets, 5) + 0.5;
+	const rowHeight = height / Math.max(availableBuckets, 5);
 
 	meanSpectra.forEach((spectra, index) => {
 		const mean = spectra.mean;
 		const y = Math.floor(height - (index + 1) * rowHeight);
-		const bucketHeight = Math.ceil(rowHeight);
+		const bucketHeight = Math.ceil(rowHeight + 0.5);
 
 		for (let i = 0; i < mean.length; i++) {
 			const magnitude = mean[i];
-			if (isNaN(magnitude) || i < 2) continue;
+			if (isNaN(magnitude)) continue;
 
 			let norm = (magnitude - minSpectrum) / (maxSpectrum - minSpectrum);
 			norm = Math.max(0, Math.min(1, norm));
@@ -96,7 +96,7 @@ export function drawSpectrogram(
 
 export function generateTestData(bufferSize: number): Map<string, number[][]> {
 	const speedBuckets = new Map<string, number[][]>();
-	const testSpeeds = [15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+	const testSpeeds = [0, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
 
 	testSpeeds.forEach((speed) => {
 		const bucket = getSpeedBucket(speed);
