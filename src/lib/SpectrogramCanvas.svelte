@@ -13,6 +13,11 @@
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
 
+	// Export function to get canvas for downloading
+	export function getCanvas(): HTMLCanvasElement | null {
+		return canvas || null;
+	}
+
 	function initCanvas() {
 		if (!canvas) return;
 		ctx = canvas.getContext('2d')!;
@@ -52,8 +57,8 @@
 			for (const [key, value] of testBuckets.entries()) {
 				speedBuckets.set(key, value);
 			}
-			drawSpectrogram(canvas, speedBuckets, bufferSize);
 		}
+		drawSpectrogram(canvas, speedBuckets, bufferSize);
 
 		const handleResize = () => {
 			if (canvas) {

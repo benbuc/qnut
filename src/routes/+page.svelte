@@ -71,7 +71,7 @@
 	<ul class="space-y-1 text-sm text-blue-700">
 		<li>• A smartphone with motion sensors (accelerometer)</li>
 		<li>• GPS capability for speed detection</li>
-		<li>• A secure phone mount in your vehicle</li>
+		<li>• A secure phone mount in your vehicle with as little damping as possible</li>
 		<li>• A passenger to operate the app safely</li>
 	</ul>
 </div>

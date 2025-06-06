@@ -44,6 +44,9 @@ export function drawSpectrogram(
 	ctx.clearRect(0, 0, width, height);
 	const barWidth = width / (bufferSize / 2) + 0.5;
 
+	ctx.fillStyle = viridisColor(0);
+	ctx.fillRect(0, 0, width, height);
+
 	if (speedBuckets.size === 0) return;
 
 	const meanSpectra: { mean: number[]; bucketRange: number[] }[] = [];
@@ -65,13 +68,10 @@ export function drawSpectrogram(
 	const minSpectrum = Math.min(...allValues);
 	const maxSpectrum = Math.max(...allValues);
 
-	ctx.fillStyle = 'rgba(240, 240, 240, 0.5)';
-	ctx.fillRect(0, 0, width, height);
-
 	meanSpectra.sort((a, b) => a.bucketRange[0] - b.bucketRange[0]);
 
 	const availableBuckets = meanSpectra.length;
-	const rowHeight = height / Math.max(availableBuckets, 5);
+	const rowHeight = height / Math.max(availableBuckets, 1);
 
 	meanSpectra.forEach((spectra, index) => {
 		const mean = spectra.mean;

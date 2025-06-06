@@ -9,7 +9,6 @@
 
 	let buffer: number[] = [];
 	let currentSpeed = $state(-1);
-	let text = $state('');
 
 	let speedBuckets = $state(new Map<string, number[][]>());
 
@@ -18,13 +17,31 @@
 	let geoWatchId: number | null = null;
 	let errorMsg = $state('');
 	let warningMsg = $state('');
+	let spectrogramCanvas: SpectrogramCanvas;
+
+	function downloadCanvas() {
+		if (!spectrogramCanvas) return;
+
+		// Get the canvas element from the SpectrogramCanvas component
+		const canvas = spectrogramCanvas.getCanvas();
+		if (!canvas) return;
+
+		// Create download link
+		const link = document.createElement('a');
+		link.download = `wheelcheck-spectrogram-${new Date().toISOString().split('T')[0]}.png`;
+		link.href = canvas.toDataURL('image/png');
+
+		// Trigger download
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
 
 	function handleMotion(event: DeviceMotionEvent) {
 		const acc = event.acceleration;
 		if (!acc || acc.x === null || acc.y === null || acc.z === null) return;
 
 		const magnitude = Math.sqrt(acc.x ** 2 + acc.y ** 2 + acc.z ** 2);
-		text = `Acceleration: x=${acc.x.toFixed(2)}, y=${acc.y.toFixed(2)}, z=${acc.z.toFixed(2)}, magnitude=${magnitude.toFixed(2)}`;
 		buffer.push(magnitude);
 
 		if (buffer.length < bufferSize) return;
@@ -118,6 +135,7 @@
 					if (pos.coords.speed !== undefined && pos.coords.speed !== null) {
 						currentSpeed = Math.max(0, pos.coords.speed * 3.6);
 						warningMsg = '';
+						errorMsg = '';
 					} else {
 						currentSpeed = -1;
 						warningMsg = 'Speed data is not available from your device.';
@@ -138,15 +156,6 @@
 			measuring = false;
 		}
 	}
-
-	onMount(() => {
-		const handleResize = () => {
-			// Canvas component handles its own resize
-		};
-
-		window.addEventListener('resize', handleResize);
-		return () => window.removeEventListener('resize', handleResize);
-	});
 
 	onDestroy(stopMeasuring);
 </script>
@@ -176,33 +185,53 @@
 	</div>
 {/if}
 
-<div class="mb-6 flex gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
-	<span class="text-xl">⚠️</span> <b>Safety Reminder:</b> Only use with a passenger operating the app.
-</div>
-
-<div class="mb-4 rounded-lg bg-white p-4 shadow-sm">
-	<div class="mb-2 text-center text-2xl font-bold text-blue-600">
+<div class="mb-3 rounded-lg bg-white p-3 shadow-sm">
+	<div class="mb-2 text-center text-xl font-bold text-blue-600">
 		{currentSpeed >= 0 ? `${currentSpeed.toFixed(1)} km/h` : 'Not measuring'}
 	</div>
 
-	<div class="flex items-center justify-center gap-4">
+	<div class="flex items-center justify-center gap-3">
 		<button
-			class="rounded-lg bg-blue-600 px-5 py-2 font-bold text-white shadow transition hover:bg-blue-700 disabled:opacity-50"
+			class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-blue-700 disabled:opacity-50"
 			onclick={startMeasuring}
 			disabled={measuring}>Start Measurement</button
 		>
 		<button
-			class="rounded-lg bg-slate-200 px-5 py-2 font-bold text-slate-700 shadow transition hover:bg-slate-300 disabled:opacity-50"
+			class="rounded-lg bg-slate-200 px-4 py-2 font-semibold text-slate-700 shadow transition hover:bg-slate-300 disabled:opacity-50"
 			onclick={stopMeasuring}
 			disabled={!measuring}>Stop</button
 		>
 	</div>
 </div>
 
-<SpectrogramCanvas {speedBuckets} {bufferSize} />
-
-{#if measuring}
-	<div class="mt-3 rounded bg-slate-50 p-3 text-center text-sm text-slate-600">
-		{text}
+{#if measuring && speedBuckets.size > 0}
+	<div class="space-y-3">
+		<SpectrogramCanvas bind:this={spectrogramCanvas} {speedBuckets} {bufferSize} />
+		<div class="flex justify-center">
+			<button
+				class="rounded-lg bg-green-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-green-700"
+				onclick={downloadCanvas}
+			>
+				📥 Download Image
+			</button>
+		</div>
+	</div>
+{:else}
+	<div
+		class="mx-auto flex aspect-square w-full max-w-md flex-col items-center justify-center rounded border border-slate-100 bg-slate-50 p-8 text-center shadow-md"
+	>
+		{#if !measuring}
+			<div class="mb-4 text-6xl">📊</div>
+			<h3 class="mb-2 text-xl font-semibold text-slate-700">Ready to Measure</h3>
+			<p class="text-slate-500">Start measurement to see wheel vibration data in real-time</p>
+		{:else}
+			<div class="mb-4 text-6xl">🔄</div>
+			<h3 class="mb-2 text-xl font-semibold text-slate-700">Collecting Data</h3>
+			<p class="text-slate-500">Drive around to gather vibration measurements</p>
+		{/if}
 	</div>
 {/if}
+
+<div class="mt-6 flex gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+	<span class="text-xl">⚠️</span> <b>Safety Reminder:</b> Only use with a passenger operating the app.
+</div>
