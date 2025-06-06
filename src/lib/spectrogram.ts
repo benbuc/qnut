@@ -92,6 +92,30 @@ export function drawSpectrogram(
 			}
 		}
 	});
+
+	// Add speed labels as overlays
+	if (meanSpectra.length > 0) {
+		// Get min and max speeds for labels
+		const allSpeeds = meanSpectra.flatMap((s) => s.bucketRange);
+		const minSpeed = Math.min(...allSpeeds);
+		const maxSpeed = Math.max(...allSpeeds);
+
+		// Configure text style with white font
+		ctx.fillStyle = 'white';
+		ctx.font = 'bold 14px system-ui, -apple-system, sans-serif';
+		ctx.textBaseline = 'top';
+		ctx.textAlign = 'left';
+
+		// Max speed label (top-left) - white text, no background
+		const maxSpeedText = `${maxSpeed} km/h`;
+		ctx.fillText(maxSpeedText, 8, 8);
+
+		// Min speed label (bottom-left) - white text, no background
+		const minSpeedText = `${minSpeed} km/h`;
+		const labelHeight = 16;
+		const minSpeedY = height - labelHeight - 8;
+		ctx.fillText(minSpeedText, 8, minSpeedY);
+	}
 }
 
 export function generateTestData(bufferSize: number): Map<string, number[][]> {
