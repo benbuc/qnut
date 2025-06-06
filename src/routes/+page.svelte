@@ -18,7 +18,12 @@
 
 <!-- How It Works Section -->
 <div class="mb-8 space-y-6">
-	<h3 class="text-xl font-semibold text-slate-800">How WheelCheck Works</h3>
+	<div class="flex items-center justify-between">
+		<h3 class="text-xl font-semibold text-slate-800">How WheelCheck Works</h3>
+		<a href="/what-to-expect" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
+			What to expect? →
+		</a>
+	</div>
 
 	<div class="grid gap-4 md:grid-cols-2">
 		<div class="rounded-lg bg-white p-4 shadow-sm">
