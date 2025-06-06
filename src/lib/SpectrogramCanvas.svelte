@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { drawSpectrogram, generateTestData } from '$lib/spectrogram';
-	import { dev } from '$app/environment';
 
 	interface Props {
 		speedBuckets: Map<string, number[][]>;
@@ -51,14 +50,6 @@
 
 	onMount(() => {
 		initCanvas();
-
-		if (dev) {
-			const testBuckets = generateTestData(bufferSize);
-			for (const [key, value] of testBuckets.entries()) {
-				speedBuckets.set(key, value);
-			}
-		}
-		drawSpectrogram(canvas, speedBuckets, bufferSize);
 
 		const handleResize = () => {
 			if (canvas) {

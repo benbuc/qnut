@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import FFT from 'fft.js';
-	import { getSpeedBucket } from '$lib/spectrogram';
+	import { generateTestData, getSpeedBucket } from '$lib/spectrogram';
 	import SpectrogramCanvas from '$lib/SpectrogramCanvas.svelte';
+	import { dev } from '$app/environment';
 
 	const bufferSize = 128;
 	const fft = new FFT(bufferSize);
@@ -17,7 +18,7 @@
 	let geoWatchId: number | null = null;
 	let errorMsg = $state('');
 	let warningMsg = $state('');
-	let spectrogramCanvas: SpectrogramCanvas;
+	let spectrogramCanvas: SpectrogramCanvas | null = $state(null);
 
 	function downloadCanvas() {
 		if (!spectrogramCanvas) return;
@@ -158,17 +159,20 @@
 	}
 
 	onDestroy(stopMeasuring);
+
+	onMount(() => {
+		if (dev) {
+			const testBuckets = generateTestData(bufferSize);
+			for (const [key, value] of testBuckets.entries()) {
+				speedBuckets.set(key, value);
+			}
+		}
+	});
 </script>
 
 <svelte:head>
 	<title>Measure - WheelCheck</title>
 </svelte:head>
-
-<nav class="mb-6">
-	<a href="/" class="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline">
-		← Back to Home
-	</a>
-</nav>
 
 {#if errorMsg}
 	<div class="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-center text-red-700">
@@ -212,7 +216,7 @@
 				class="rounded-lg bg-green-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-green-700"
 				onclick={downloadCanvas}
 			>
-				📥 Download Image
+				📥 Download
 			</button>
 		</div>
 	</div>
@@ -235,3 +239,9 @@
 <div class="mt-6 flex gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
 	<span class="text-xl">⚠️</span> <b>Safety Reminder:</b> Only use with a passenger operating the app.
 </div>
+
+<nav class="mt-6">
+	<a href="/" class="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline">
+		← Back to Home
+	</a>
+</nav>
