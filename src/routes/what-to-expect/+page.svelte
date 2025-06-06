@@ -76,8 +76,10 @@
 					frequencies<br />
 					• <strong>Vibrations get stronger with speed</strong> - imbalanced wheels shake more at
 					highway speeds<br />
-					• <strong>The line through origin</strong> - shows this direct relationship between speed and
-					vibration
+					• <strong>The line through origin</strong> - shows this direct relationship between speed
+					and vibration<br />
+					• <strong>Focus on higher speeds</strong> - vibrations usually only become noticeable above
+					40-50 km/h
 				</p>
 			</div>
 		</div>
@@ -94,6 +96,23 @@
 					• <strong>Bright yellow/white</strong> - High vibration intensity (potential imbalance)
 				</p>
 			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Speed Importance Note -->
+<div class="mb-8 rounded-lg bg-indigo-50 p-4">
+	<div class="mb-3 flex items-start gap-3">
+		<span class="text-2xl">🚗</span>
+		<div>
+			<h4 class="mb-2 font-semibold text-indigo-800">Why Higher Speeds Matter</h4>
+			<p class="text-sm text-indigo-700">
+				The visualization focuses on higher speeds because wheel imbalances typically don't produce
+				noticeable vibrations below 40-50 km/h. For the most accurate diagnosis, measurements at
+				highway speeds (70-100 km/h) are particularly valuable, as imbalance effects are amplified
+				at these speeds. Lower speed measurements may show normal vibration levels even when an
+				imbalance exists.
+			</p>
 		</div>
 	</div>
 </div>
@@ -120,7 +139,8 @@
 				<h4 class="font-medium text-slate-800">Possible Imbalance</h4>
 				<p class="text-sm text-slate-600">
 					Clear diagonal line pattern with bright colors (yellow/white) indicating strong vibrations
-					that increase with speed.
+					that increase with speed. Pay special attention to readings at higher speeds (above 40-50
+					km/h), as wheel imbalances are typically not noticeable at lower speeds.
 				</p>
 			</div>
 		</div>

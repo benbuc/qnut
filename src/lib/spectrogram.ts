@@ -63,12 +63,16 @@ export function drawSpectrogram(
 		meanSpectra.push({ mean, bucketRange: bucket.split('-').map(Number) });
 	}
 
-	const ignoreCount = Math.floor((bufferSize / 2) * 0.1);
-	const allValues = meanSpectra.flatMap((obj) => obj.mean.slice(ignoreCount));
-	const minSpectrum = Math.min(...allValues);
-	const maxSpectrum = Math.max(...allValues);
-
 	meanSpectra.sort((a, b) => a.bucketRange[0] - b.bucketRange[0]);
+
+	// min and max for normalization
+	const lowerFrequencyIgnoreCount = Math.floor((bufferSize / 2) * 0.1);
+	const lowerSpeedsIgnoreCount = Math.floor(meanSpectra.length * 0.3);
+	const valuesOfInterest = meanSpectra
+		.slice(lowerSpeedsIgnoreCount)
+		.flatMap((obj) => obj.mean.slice(lowerFrequencyIgnoreCount));
+	const minSpectrum = Math.min(...valuesOfInterest);
+	const maxSpectrum = Math.max(...valuesOfInterest);
 
 	const availableBuckets = meanSpectra.length;
 	const rowHeight = height / Math.max(availableBuckets, 1);
