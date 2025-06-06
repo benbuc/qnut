@@ -1,3 +1,7 @@
+<script>
+	import DonateButton from '$lib/DonateButton.svelte';
+</script>
+
 <svelte:head>
 	<title>WheelCheck - Detect Wheel Imbalances</title>
 	<meta
@@ -61,6 +65,26 @@
 					• This tool provides indicators only - consult a professional mechanic for diagnosis
 				</li>
 			</ul>
+		</div>
+	</div>
+</div>
+
+<!-- Support Section -->
+<div class="mb-8 rounded-lg border border-blue-200 bg-blue-50 p-4">
+	<div class="flex flex-col items-center text-center">
+		<div class="mb-2 text-2xl">☕</div>
+		<h4 class="mb-2 font-bold text-blue-800">Support WheelCheck</h4>
+		<p class="mb-3 text-sm text-blue-700">
+			WheelCheck is free to use. If you find it helpful, consider supporting the development.
+		</p>
+		<div class="flex gap-4">
+			<DonateButton text="Buy me a coffee" size="default" variant="primary" showPopup={true} />
+			<a
+				href="/support"
+				class="hover:bg-opacity-10 inline-flex items-center rounded-md border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-600"
+			>
+				Learn more
+			</a>
 		</div>
 	</div>
 </div>

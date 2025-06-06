@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.css';
+	import DonateButton from '$lib/DonateButton.svelte';
 	let { children } = $props();
 </script>
 
@@ -13,10 +14,14 @@
 	</main>
 
 	<footer class="mt-12 text-center text-sm text-slate-500">
+		<div class="mb-4">
+			<DonateButton text="Support WheelCheck" variant="secondary" size="small" color="blue-600" />
+		</div>
 		<p>
 			© {new Date().getFullYear()} WheelCheck |
-			<a href="/imprint" class="hover:underline">Imprint</a>
-			| <a href="/privacy" class="hover:underline">Privacy</a>
+			<a href="/support" class="hover:underline">Support</a> |
+			<a href="/imprint" class="hover:underline">Imprint</a> |
+			<a href="/privacy" class="hover:underline">Privacy</a>
 		</p>
 		<p class="mt-1">
 			Made with <span class="text-red-500">❤️</span> in Europe
