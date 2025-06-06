@@ -13,6 +13,13 @@
 	</main>
 
 	<footer class="mt-12 text-center text-sm text-slate-500">
-		<p>© {new Date().getFullYear()} WheelCheck</p>
+		<p>
+			© {new Date().getFullYear()} WheelCheck |
+			<a href="/imprint" class="hover:underline">Imprint</a>
+			| <a href="/privacy" class="hover:underline">Privacy</a>
+		</p>
+		<p class="mt-1">
+			Made with <span class="text-red-500">❤️</span> in Europe
+		</p>
 	</footer>
 </div>
