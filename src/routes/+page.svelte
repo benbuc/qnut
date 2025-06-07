@@ -34,8 +34,9 @@
 			<div class="mb-2 text-3xl">📱</div>
 			<h4 class="mb-2 font-semibold text-blue-600">1. Measure Vibrations</h4>
 			<p class="text-sm text-slate-600">
-				Your phone's accelerometer detects vibrations while driving. Imbalanced wheels create
-				distinctive vibration patterns that vary with speed.
+				Mount your phone securely on a hard surface in your vehicle. The app uses your phone's
+				accelerometer to detect vibrations while driving. Imbalanced wheels create distinctive
+				vibration patterns that vary with speed.
 			</p>
 		</div>
 
@@ -75,13 +76,14 @@
 		<div class="mb-2 text-2xl">☕</div>
 		<h4 class="mb-2 font-bold text-blue-800">Support WheelCheck</h4>
 		<p class="mb-3 text-sm text-blue-700">
-			WheelCheck is free to use. If you find it helpful, consider supporting the development.
+			WheelCheck is free to use. If you find it helpful, consider supporting the development. I
+			would appreciate it a lot!
 		</p>
-		<div class="flex gap-4">
-			<DonateButton text="Buy me a coffee" size="default" variant="primary" showPopup={true} />
+		<div class="gap-4 sm:flex">
+			<DonateButton text="Buy me a coffee" size="default" variant="primary" />
 			<a
 				href="/support"
-				class="hover:bg-opacity-10 inline-flex items-center rounded-md border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-600"
+				class="m-4 inline-flex h-min items-center rounded-md border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 hover:opacity-60"
 			>
 				Learn more
 			</a>

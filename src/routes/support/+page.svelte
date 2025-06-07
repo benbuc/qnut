@@ -49,7 +49,7 @@
 		</ul>
 
 		<div class="flex justify-center">
-			<DonateButton text="Buy me a coffee" size="large" variant="primary" showPopup={true} />
+			<DonateButton text="Buy me a coffee" size="large" variant="primary" />
 		</div>
 	</div>
 
