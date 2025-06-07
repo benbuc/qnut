@@ -79,7 +79,7 @@ const translations: Translations = {
 		'measure.collectingDescription': 'Drive around to gather vibration measurements',
 		'measure.helpLink': 'How to read the spectrogram? →',
 		'safety.reminder': 'Safety Reminder',
-		'safety.passenger': 'Only use with a passenger operating the app',
+		'safety.passenger': 'Do not operate the app while driving.',
 		'nav.backToHome': 'Back to Home',
 
 		// Permissions and errors
