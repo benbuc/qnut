@@ -17,21 +17,20 @@ export class LocalStorage<T> {
 	constructor(key: string, initial?: T) {
 		this.#key = key;
 		this.#value = initial;
-
-		if (typeof localStorage !== 'undefined') {
-			if (localStorage.getItem(key) === null) {
-				localStorage.setItem(key, JSON.stringify(initial));
-			}
-		}
+		// Don't save to localStorage in constructor anymore
+		// The initial value will only be used if there's nothing in localStorage
 	}
 
 	get current() {
 		this.#version;
 
-		const root =
-			typeof localStorage !== 'undefined'
-				? JSON.parse(localStorage.getItem(this.#key) as any)
-				: this.#value;
+		let root;
+		if (typeof localStorage !== 'undefined') {
+			const storedValue = localStorage.getItem(this.#key);
+			root = storedValue !== null ? JSON.parse(storedValue as string) : this.#value;
+		} else {
+			root = this.#value;
+		}
 
 		const proxies = new WeakMap();
 
