@@ -1,10 +1,6 @@
 import globalTranslations from '$lib/translations';
 import { LocalStorage } from './storage.svelte';
 
-// Simple state for the current locale
-//export const locale = $state({ current: 'de' });
-export const locale = new LocalStorage('locale', 'en');
-
 // Define the translation structure
 export interface Translations {
 	[locale: string]: {
@@ -23,6 +19,21 @@ const translationsRegistry: TranslationRegistry = {
 
 // Update the locales based on all available translations
 export const locales = Object.keys(globalTranslations) as string[];
+
+// Function to get browser language and check if it's supported
+export function getDefaultLocale(): string {
+	// Only run this in the browser
+	if (typeof window === 'undefined') return 'en';
+
+	// Get browser language (e.g., 'en-US', 'de-DE', etc.)
+	const browserLang = navigator.language.split('-')[0];
+
+	// Check if the browser language is supported, otherwise fallback to English
+	return locales.includes(browserLang) ? browserLang : 'en';
+}
+
+// Simple state for the current locale with browser language detection
+export const locale = new LocalStorage('locale', getDefaultLocale());
 
 interface TranslationVars {
 	[key: string]: string;
