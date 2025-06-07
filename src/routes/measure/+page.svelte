@@ -4,6 +4,7 @@
 	import { generateTestData, getSpeedBucket } from '$lib/spectrogram';
 	import SpectrogramCanvas from '$lib/SpectrogramCanvas.svelte';
 	import { dev } from '$app/environment';
+	import { t } from '$lib/i18n.svelte';
 
 	const bufferSize = 128;
 	const fft = new FFT(bufferSize);
@@ -86,12 +87,12 @@
 		resetErrors();
 
 		if (!('geolocation' in navigator)) {
-			errorMsg = 'Geolocation API is not available on this device.';
+			errorMsg = t('measure:error.geolocation');
 			return;
 		}
 
 		if (typeof window.DeviceMotionEvent === 'undefined') {
-			errorMsg = 'DeviceMotion API is not available on this device.';
+			errorMsg = t('measure:error.devicemotion');
 			return;
 		}
 
@@ -122,7 +123,7 @@
 			if (typeof DeviceMotionEventWithPermission.requestPermission === 'function') {
 				const response = await DeviceMotionEventWithPermission.requestPermission();
 				if (response !== 'granted') {
-					errorMsg = 'Permission denied to access motion sensors.';
+					errorMsg = t('measure:error.motionPermissionDenied');
 					measuring = false;
 					return;
 				}
@@ -139,7 +140,7 @@
 						errorMsg = '';
 					} else {
 						currentSpeed = -1;
-						warningMsg = 'Speed data is not available from your device.';
+						warningMsg = t('measure:error.noSpeed');
 					}
 				},
 				(err) => {
@@ -171,12 +172,12 @@
 </script>
 
 <svelte:head>
-	<title>Measure - WheelCheck</title>
+	<title>{t('measure:measure.title')} - WheelCheck</title>
 </svelte:head>
 
 {#if errorMsg}
 	<div class="mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-center text-red-700">
-		<strong>Error:</strong>
+		<strong>{t('measure:error.label')}:</strong>
 		{errorMsg}
 	</div>
 {/if}
@@ -184,26 +185,28 @@
 	<div
 		class="mb-4 rounded border border-yellow-400 bg-yellow-100 px-4 py-3 text-center text-yellow-800"
 	>
-		<strong>Warning:</strong>
+		<strong>{t('measure:warning.label')}:</strong>
 		{warningMsg}
 	</div>
 {/if}
 
 <div class="mb-3 rounded-lg bg-white p-3 shadow-sm">
 	<div class="mb-2 text-center text-xl font-bold text-blue-600">
-		{currentSpeed >= 0 ? `${currentSpeed.toFixed(1)} km/h` : 'Not measuring'}
+		{currentSpeed >= 0
+			? t('measure:measure.currentSpeed', { speed: currentSpeed.toFixed(1) })
+			: t('measure:measure.notMeasuring')}
 	</div>
 
 	<div class="flex items-center justify-center gap-3">
 		<button
 			class="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-blue-700 disabled:opacity-50"
 			onclick={startMeasuring}
-			disabled={measuring}>Start Measurement</button
+			disabled={measuring}>{t('measure:measure.start')}</button
 		>
 		<button
 			class="rounded-lg bg-slate-200 px-4 py-2 font-semibold text-slate-700 shadow transition hover:bg-slate-300 disabled:opacity-50"
 			onclick={stopMeasuring}
-			disabled={!measuring}>Stop</button
+			disabled={!measuring}>{t('measure:measure.stop')}</button
 		>
 	</div>
 </div>
@@ -216,7 +219,7 @@
 				class="rounded-lg bg-green-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-green-700"
 				onclick={downloadCanvas}
 			>
-				📥 Download
+				📥 {t('measure:measure.download')}
 			</button>
 		</div>
 	</div>
@@ -226,22 +229,23 @@
 	>
 		{#if !measuring}
 			<div class="mb-4 text-6xl">📊</div>
-			<h3 class="mb-2 text-xl font-semibold text-slate-700">Ready to Measure</h3>
-			<p class="text-slate-500">Start measurement to see wheel vibration data in real-time</p>
+			<h3 class="mb-2 text-xl font-semibold text-slate-700">{t('measure:measure.ready')}</h3>
+			<p class="text-slate-500">{t('measure:measure.readyDescription')}</p>
 		{:else}
 			<div class="mb-4 text-6xl">🔄</div>
-			<h3 class="mb-2 text-xl font-semibold text-slate-700">Collecting Data</h3>
-			<p class="text-slate-500">Drive around to gather vibration measurements</p>
+			<h3 class="mb-2 text-xl font-semibold text-slate-700">{t('measure:measure.collecting')}</h3>
+			<p class="text-slate-500">{t('measure:measure.collectingDescription')}</p>
 		{/if}
 	</div>
 {/if}
 
 <div class="mt-6 flex gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
-	<span class="text-xl">⚠️</span> <b>Safety Reminder:</b> Only use with a passenger operating the app.
+	<span class="text-xl">⚠️</span> <b>{t('measure:safety.reminder')}:</b>
+	{t('measure:safety.passenger')}
 </div>
 
 <nav class="mt-6">
 	<a href="/" class="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline">
-		← Back to Home
+		← {t('measure:nav.backToHome')}
 	</a>
 </nav>
