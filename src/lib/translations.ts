@@ -7,7 +7,7 @@ const translations: Translations = {
 		privacy: 'Datenschutz',
 		madeWith: 'Made with ❤️ in Europe',
 		supportWheelCheck: 'WheelCheck unterstützen',
-		buyMeCoffee: 'Spendiere mir einen Kaffee',
+		buyMeCoffee: 'Spende einen Kaffee',
 		learnMore: 'Mehr erfahren'
 	},
 	en: {
