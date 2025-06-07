@@ -22,9 +22,12 @@
 </svelte:head>
 
 <!-- Back navigation -->
-<div class="mb-6">
+<div class="mb-6 flex justify-between">
 	<a href="/" class="inline-flex items-center text-blue-600 hover:text-blue-800">
 		← {t('what-to-expect:nav.backToHome')}
+	</a>
+	<a href="/measure" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+		← {t('what-to-expect:nav.backToMeasure')}
 	</a>
 </div>
 

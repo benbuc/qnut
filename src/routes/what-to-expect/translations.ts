@@ -9,6 +9,7 @@ const translations: Translations = {
 
 		// Navigation
 		'nav.backToHome': 'Zurück zur Startseite',
+		'nav.backToMeasure': 'Zurück zur Messung',
 
 		// Page Header
 		'header.title': 'Auswertung',
@@ -75,6 +76,7 @@ const translations: Translations = {
 
 		// Navigation
 		'nav.backToHome': 'Back to Home',
+		'nav.backToMeasure': 'Back to Measurement',
 
 		// Page Header
 		'header.title': 'What to Expect in Your Spectrogram',

@@ -214,7 +214,10 @@
 {#if measuring && speedBuckets.size > 0}
 	<div class="space-y-3">
 		<SpectrogramCanvas bind:this={spectrogramCanvas} {speedBuckets} {bufferSize} />
-		<div class="flex justify-center">
+		<div class="flex items-center justify-between">
+			<a href="/what-to-expect" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
+				{t('measure:measure.helpLink')}
+			</a>
 			<button
 				class="rounded-lg bg-green-600 px-4 py-2 font-semibold text-white shadow transition hover:bg-green-700"
 				onclick={downloadCanvas}
@@ -231,6 +234,11 @@
 			<div class="mb-4 text-6xl">📊</div>
 			<h3 class="mb-2 text-xl font-semibold text-slate-700">{t('measure:measure.ready')}</h3>
 			<p class="text-slate-500">{t('measure:measure.readyDescription')}</p>
+			<div class="mt-4">
+				<a href="/what-to-expect" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
+					{t('measure:measure.helpLink')}
+				</a>
+			</div>
 		{:else}
 			<div class="mb-4 text-6xl">🔄</div>
 			<h3 class="mb-2 text-xl font-semibold text-slate-700">{t('measure:measure.collecting')}</h3>
