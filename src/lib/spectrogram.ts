@@ -7,6 +7,13 @@ const viridisColors = colormap({
 	alpha: 1
 });
 
+const confidenceColors = colormap({
+	colormap: 'cool', // Red-Yellow-Green colormap
+	nshades: 256,
+	format: 'rgba',
+	alpha: 1
+});
+
 export function viridisColor(t: number): string {
 	try {
 		t = Math.max(0, Math.min(1, t));
@@ -23,6 +30,25 @@ export function viridisColor(t: number): string {
 	} catch (e) {
 		console.error('Error in viridisColor:', e);
 		return 'rgba(0, 0, 255, 1)';
+	}
+}
+
+export function confidenceColor(t: number): string {
+	try {
+		t = Math.max(0, Math.min(1, t));
+		const idx = Math.round(t * 255);
+		if (idx < 0 || idx >= confidenceColors.length) {
+			return 'rgba(255, 0, 0, 1)';
+		}
+
+		const color = confidenceColors[idx];
+		if (Array.isArray(color)) {
+			return `rgba(${color[0]},${color[1]},${color[2]},1)`;
+		}
+		return color;
+	} catch (e) {
+		console.error('Error in confidenceColor:', e);
+		return 'rgba(255, 0, 0, 1)';
 	}
 }
 
@@ -81,14 +107,25 @@ export function drawSpectrogram(
 		const mean = spectra.mean;
 		const y = height - (index + 1) * rowHeight;
 
+		// Get the count of measurements for this speed bucket
+		const bucket = `${spectra.bucketRange[0]}-${spectra.bucketRange[1]}`;
+		const measurementCount = speedBuckets.get(bucket)?.length || 0;
+
+		// Calculate confidence (0 = low/red, 1 = high/green) with max at 20 measurements
+		const confidence = Math.min(measurementCount / 20, 1);
+
 		for (let i = 0; i < mean.length; i++) {
 			const magnitude = mean[i];
 			if (isNaN(magnitude)) continue;
 
-			let norm = (magnitude - minSpectrum) / (maxSpectrum - minSpectrum);
-			norm = Math.max(0, Math.min(1, norm));
-
-			ctx.fillStyle = viridisColor(norm);
+			// First two columns show confidence data
+			if (i < 2) {
+				ctx.fillStyle = confidenceColor(confidence);
+			} else {
+				let norm = (magnitude - minSpectrum) / (maxSpectrum - minSpectrum);
+				norm = Math.max(0, Math.min(1, norm));
+				ctx.fillStyle = viridisColor(norm);
+			}
 
 			if (y >= 0 && y + rowHeight <= height) {
 				ctx.fillRect(
@@ -116,13 +153,36 @@ export function drawSpectrogram(
 
 		// Max speed label (top-left) - white text, no background
 		const maxSpeedText = `${maxSpeed} km/h`;
-		ctx.fillText(maxSpeedText, 8, 8);
+		ctx.fillText(maxSpeedText, 24, 8);
 
 		// Min speed label (bottom-left) - white text, no background
 		const minSpeedText = `${minSpeed} km/h`;
 		const labelHeight = 16;
 		const minSpeedY = height - labelHeight - 8;
-		ctx.fillText(minSpeedText, 8, minSpeedY);
+		ctx.fillText(minSpeedText, 24, minSpeedY);
+
+		// Add confidence legend explanation
+		ctx.font = '12px system-ui, -apple-system, sans-serif';
+		ctx.fillText('Confidence: ', 24, 45);
+
+		// Draw confidence color bar
+		const legendWidth = 100;
+		const legendHeight = 10;
+		const gradient = ctx.createLinearGradient(16, 53, 16 + legendWidth, 53);
+		gradient.addColorStop(0, confidenceColor(0)); // Red (min confidence)
+		gradient.addColorStop(1, confidenceColor(1)); // Green (max confidence)
+
+		ctx.fillStyle = gradient;
+		ctx.fillRect(24, 61, legendWidth, legendHeight);
+
+		// Add confidence labels
+		ctx.fillStyle = 'white';
+		ctx.font = '10px system-ui, -apple-system, sans-serif';
+		ctx.textBaseline = 'top';
+		ctx.textAlign = 'left';
+		ctx.fillText('Low', 24, 61 + legendHeight + 2);
+		ctx.textAlign = 'right';
+		ctx.fillText('High', 23 + legendWidth, 61 + legendHeight + 2);
 	}
 }
 
@@ -135,7 +195,11 @@ export function generateTestData(bufferSize: number): Map<string, number[][]> {
 		const bucket = getSpeedBucket(speed);
 		const testData = [];
 
-		for (let i = 0; i < 5; i++) {
+		// Generate a variable number of measurements to demonstrate confidence levels
+		// Higher speeds will have more measurements (to make test data more interesting)
+		const measurementCount = Math.min(Math.floor(speed / 10) + 1, 25);
+
+		for (let i = 0; i < measurementCount; i++) {
 			const fakeSpectrum = Array(bufferSize / 2)
 				.fill(0)
 				.map((_, i) => {
