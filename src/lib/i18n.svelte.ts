@@ -1,7 +1,9 @@
 import globalTranslations from '$lib/translations';
+import { LocalStorage } from './storage.svelte';
 
 // Simple state for the current locale
-export const locale = $state({ current: 'de' });
+//export const locale = $state({ current: 'de' });
+export const locale = new LocalStorage('locale', 'en');
 
 // Define the translation structure
 export interface Translations {
@@ -41,9 +43,9 @@ function translate(locale: string, key: string, vars: TranslationVars): string {
 	// Get the text for the current locale and key, with fallbacks
 	let text =
 		translationSet[locale]?.[actualKey] ||
-		translationSet.de?.[actualKey] ||
+		translationSet.en?.[actualKey] ||
 		globalTranslations[locale]?.[actualKey] ||
-		globalTranslations.de?.[actualKey] ||
+		globalTranslations.en?.[actualKey] ||
 		`${locale}.${key}`;
 
 	// Replace variables in the text
