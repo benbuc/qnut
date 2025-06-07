@@ -98,6 +98,12 @@
 
 		measuring = true;
 		requestPermissionAndListen();
+
+		fetch('/api/metrics/increment', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ metric: 'measurements', type: 'acceleration' })
+		}).catch((e) => console.error('Failed to send metrics:', e));
 	}
 
 	function stopMeasuring() {

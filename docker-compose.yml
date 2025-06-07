@@ -11,7 +11,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.constraint-label-stack=wheelcheck
-      - traefik.http.routers.wheelcheck-app.rule=Host(`${DOMAIN?Variable not set}`)
+      - traefik.http.routers.wheelcheck-app.rule=Host(`${DOMAIN?Variable not set}`) && !PathPrefix(`/metrics`)
 
   proxy:
     image: traefik:v3.4
