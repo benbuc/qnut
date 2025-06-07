@@ -10,13 +10,61 @@ services:
       - ./logs:/app/static/logs
     labels:
       - traefik.enable=true
+      - traefik.constraint-label-stack=wheelcheck
+      - traefik.http.routers.wheelcheck-app.rule=Host(`${DOMAIN?Variable not set}`)
+
+  proxy:
+    image: traefik:v3.4
+    networks:
+      - default
+      - traefik-public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    command:
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.constraints=Label(`traefik.constraint-label-stack`, `wheelcheck`)
+      - --metrics.prometheus
+    labels:
+      - traefik.enable=true
       - traefik.docker.network=traefik-public
       - traefik.constraint-label=traefik-public
-      - traefik.http.routers.wheelcheck-proxy.rule=Host(`wheelcheck.benbuc.de`)
+      - traefik.http.routers.wheelcheck-proxy.rule=Host(`${DOMAIN?Variable not set}`) || Host(`grafana.${DOMAIN?Variable not set}`)
       - traefik.http.routers.wheelcheck-proxy.tls=true
       - traefik.http.routers.wheelcheck-proxy.tls.certresolver=le
-      - traefik.http.middlewares.wheelcheck-auth.basicauth.users=${BA_CREDENTIALS?Variable not set}
-      - traefik.http.routers.wheelcheck-proxy.middlewares=wheelcheck-auth
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    restart: unless-stopped
+    networks:
+      - default
+      - traefik-public
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./deployment/grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER?Variable not set}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD?Variable not set}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    labels:
+      - traefik.enable=true
+      - traefik.constraint-label-stack=wheelcheck
+      - traefik.http.routers.wheelcheck-grafana.rule=Host(`${DOMAIN?Variable not set}`)
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    restart: unless-stopped
+    volumes:
+      - ./deployment/prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+
+volumes:
+  prometheus_data:
+  grafana_data:
 
 networks:
   traefik-public:
