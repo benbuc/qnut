@@ -51,7 +51,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.constraint-label-stack=wheelcheck
-      - traefik.http.routers.wheelcheck-grafana.rule=Host(`${DOMAIN?Variable not set}`)
+      - traefik.http.routers.wheelcheck-grafana.rule=Host(`grafana.${DOMAIN?Variable not set}`)
 
   prometheus:
     image: prom/prometheus:v2.54.1
