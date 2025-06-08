@@ -77,14 +77,13 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 
 	const meanSpectra: { confidence: number; mean: number[]; bucketRange: number[] }[] = [];
 	for (const [bucket, spectra] of speedBuckets.entries()) {
-		const measurementCount = bucket.length || 0;
+		const measurementCount = spectra.length || 0;
 		const confidence = Math.min(measurementCount / 20, 1);
 
 		const mean = spectra.reduce(
 			(acc, spectrum) => {
 				spectrum.forEach((value, index) => {
-					acc[index] = (acc[index] || 0) + value / spectra.length;
-					acc[index] *= confidence; // Apply confidence to the mean
+					acc[index] = (acc[index] || 0) + (value * confidence) / spectra.length;
 				});
 				return acc;
 			},
