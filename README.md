@@ -1,38 +1,36 @@
-# sv
+# Qnut - Detect Wheel Imbalances with Your Smartphone
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+![Qnut Logo](static/favicon.png)
 
-## Creating a project
+Qnut is a web application that helps you detect potential wheel imbalances in your vehicle using your smartphone's built-in sensors.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## 📱 How It Works
 
-```bash
-# create a new project in the current directory
-npx sv create
+1. **Measure Vibrations**: Mount your smartphone securely on a hard surface in your vehicle. The app uses your phone's accelerometer to detect vibrations while driving. Imbalanced wheels create distinctive vibration patterns that vary with speed.
 
-# create a new project in my-app
-npx sv create my-app
-```
+2. **Analyze & Visualize**: Qnut processes vibration data and displays it as a spectrogram, showing frequency patterns across different speeds to help identify potential wheel issues.
 
-## Developing
+## ⚠️ Safety First
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- **NEVER operate Qnut while driving**
+- Always have a passenger handle the app during measurements
+- Securely mount your phone to prevent it from moving
+- Drive safely and follow all traffic laws
+- This tool provides indicators only - consult a professional mechanic for diagnosis
 
-```bash
-npm run dev
+## 📋 Requirements
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+- A smartphone with motion sensors (accelerometer)
+- GPS capability for speed detection
+- Secure phone mount in your vehicle with as little damping as possible
+- A passenger to operate the app
 
-## Building
+## ☕ Support
 
-To create a production version of your app:
+If you find Qnut useful, consider:
 
-```bash
-npm run build
-```
+- [Buying me a coffee](https://www.buymeacoffee.com/bebu)
+- Providing feedback and reporting issues
+- Sharing the app with others
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Appreciate it a lot!
