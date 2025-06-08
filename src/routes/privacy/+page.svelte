@@ -1,4 +1,11 @@
 <script lang="ts">
+	import {
+		PUBLIC_CONTACT_CITY,
+		PUBLIC_CONTACT_EMAIL,
+		PUBLIC_CONTACT_NAME,
+		PUBLIC_CONTACT_STREET
+	} from '$env/static/public';
+
 	let currentLanguage = 'en';
 
 	function toggleLanguage() {
@@ -25,8 +32,15 @@
 			<p>
 				The following information provides a simple overview of what happens to your personal data
 				when you visit this website. Personal data is any data that could be used to identify you
-				personally. For detailed information on data protection, please refer to our Privacy Policy
-				listed below.
+				personally.
+			</p>
+			<p>
+				In general, we aim to collect as little personal data as possible.
+				<strong>Data from your device's sensors is never transmitted to us.</strong>
+			</p>
+			<p>
+				For detailed information on data protection, please refer to our Privacy Policy listed
+				below.
 			</p>
 
 			<h3>Data Collection on This Website</h3>
@@ -85,14 +99,13 @@
 			<h3>Information about the Responsible Party</h3>
 			<p>The responsible party for data processing on this website is:</p>
 			<p>
-				[Your Full Name]<br />
-				[Your Street and House Number]<br />
-				[Your Postal Code and City]<br />
+				{PUBLIC_CONTACT_NAME}<br />
+				{PUBLIC_CONTACT_STREET}<br />
+				{PUBLIC_CONTACT_CITY}<br />
 				Germany
 			</p>
 			<p>
-				Phone: [Your Phone Number]<br />
-				Email: [Your Email Address]
+				Email: {PUBLIC_CONTACT_EMAIL}
 			</p>
 			<p>
 				The responsible party is the natural or legal person who, alone or jointly with others,
@@ -157,25 +170,11 @@
 				files must be collected.
 			</p>
 
-			<h3>Contact Form</h3>
+			<h3>Telemetry</h3>
 			<p>
-				If you send us inquiries via the contact form, your details from the inquiry form, including
-				the contact details you provided there, will be stored by us for the purpose of processing
-				the inquiry and in the event of follow-up questions. We will not share this information
-				without your consent.
-			</p>
-			<p>
-				The processing of this data is based on Art. 6 (1) (b) GDPR, if your request is related to
-				the execution of a contract or is necessary for carrying out pre-contractual measures. In
-				all other cases, the processing is based on our legitimate interest in the effective
-				processing of the requests addressed to us (Art. 6 (1) (f) GDPR) or on your consent (Art. 6
-				(1) (a) GDPR) if this has been requested.
-			</p>
-			<p>
-				The information you provide in the contact form will remain with us until you request
-				deletion, revoke your consent to storage, or the purpose for data storage no longer applies
-				(e.g., after your request has been processed). Mandatory statutory provisions – especially
-				retention periods – remain unaffected.
+				We count the number of measurements that have been conducted completely anonymously to get
+				on overview of overall usage. The sensor data that is collected by your phone is not
+				transmitted to us at any time.
 			</p>
 
 			<h2>4. Analytics and Advertising</h2>
@@ -189,9 +188,15 @@
 			<p>
 				Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren
 				personenbezogenen Daten passiert, wenn Sie diese Website besuchen. Personenbezogene Daten
-				sind alle Daten, mit denen Sie persönlich identifiziert werden können. Ausführliche
-				Informationen zum Thema Datenschutz entnehmen Sie unserer unter diesem Text aufgeführten
-				Datenschutzerklärung.
+				sind alle Daten, mit denen Sie persönlich identifiziert werden können.
+			</p>
+			<p>
+				Im Allgemeinen versuchen wir, so wenig personenbezogene Daten wie möglich zu erfassen.
+				<strong>Daten von den Sensoren Ihres Geräts werden niemals an uns übertragen.</strong>
+			</p>
+			<p>
+				Ausführliche Informationen zum Thema Datenschutz entnehmen Sie unserer unter diesem Text
+				aufgeführten Datenschutzerklärung.
 			</p>
 
 			<h3>Datenerfassung auf dieser Website</h3>
@@ -257,14 +262,13 @@
 			<h3>Hinweis zur verantwortlichen Stelle</h3>
 			<p>Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:</p>
 			<p>
-				[Ihr vollständiger Name]<br />
-				[Ihre Straße und Hausnummer]<br />
-				[Ihre Postleitzahl und Stadt]<br />
+				{PUBLIC_CONTACT_NAME}<br />
+				{PUBLIC_CONTACT_STREET}<br />
+				{PUBLIC_CONTACT_CITY}<br />
 				Deutschland
 			</p>
 			<p>
-				Telefon: [Ihre Telefonnummer]<br />
-				E-Mail: [Ihre E-Mail-Adresse]
+				E-Mail: {PUBLIC_CONTACT_EMAIL}
 			</p>
 			<p>
 				Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder gemeinsam
@@ -329,26 +333,11 @@
 				und der Optimierung seiner Website – hierzu müssen die Server-Log-Files erfasst werden.
 			</p>
 
-			<h3>Kontaktformular</h3>
+			<h3>Telemetrie</h3>
 			<p>
-				Wenn Sie uns per Kontaktformular Anfragen zukommen lassen, werden Ihre Angaben aus dem
-				Anfrageformular inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der
-				Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir
-				nicht ohne Ihre Einwilligung weiter.
-			</p>
-			<p>
-				Die Verarbeitung dieser Daten erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO, sofern
-				Ihre Anfrage mit der Erfüllung eines Vertrags zusammenhängt oder zur Durchführung
-				vorvertraglicher Maßnahmen erforderlich ist. In allen übrigen Fällen beruht die Verarbeitung
-				auf unserem berechtigten Interesse an der effektiven Bearbeitung der an uns gerichteten
-				Anfragen (Art. 6 Abs. 1 lit. f DSGVO) oder auf Ihrer Einwilligung (Art. 6 Abs. 1 lit. a
-				DSGVO) sofern diese abgefragt wurde.
-			</p>
-			<p>
-				Die von Ihnen im Kontaktformular eingegebenen Daten verbleiben bei uns, bis Sie uns zur
-				Löschung auffordern, Ihre Einwilligung zur Speicherung widerrufen oder der Zweck für die
-				Datenspeicherung entfällt (z. B. nach abgeschlossener Bearbeitung Ihrer Anfrage). Zwingende
-				gesetzliche Bestimmungen – insbesondere Aufbewahrungsfristen – bleiben unberührt.
+				Wir zählen die Anzahl der Messungen, die durchgeführt wurden, komplett anonym um einen
+				Überblick über die Gesamtbenutzung zu erhalten. Die Sensordaten, die von Ihrem Telefon
+				erfasst werden, werden zu keinem Zeitpunkt an uns übertragen.
 			</p>
 
 			<h2>4. Analytics und Werbung</h2>

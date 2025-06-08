@@ -1,4 +1,11 @@
 <script lang="ts">
+	import {
+		PUBLIC_CONTACT_NAME,
+		PUBLIC_CONTACT_STREET,
+		PUBLIC_CONTACT_CITY,
+		PUBLIC_CONTACT_EMAIL
+	} from '$env/static/public';
+
 	let currentLanguage = 'en';
 
 	function toggleLanguage() {
@@ -21,24 +28,15 @@
 		<div>
 			<h2>Information according to § 5 TMG</h2>
 			<p>
-				[Your Full Name]<br />
-				[Your Street and Number]<br />
-				[Your Postal Code and City]<br />
+				{PUBLIC_CONTACT_NAME}<br />
+				{PUBLIC_CONTACT_STREET}<br />
+				{PUBLIC_CONTACT_CITY}<br />
 				Germany
 			</p>
 
 			<h2>Contact</h2>
 			<p>
-				Phone: [Your Phone Number]<br />
-				Email: [Your Email Address]<br />
-			</p>
-
-			<h2>Responsible for content according to § 55 Abs. 2 RStV</h2>
-			<p>
-				[Your Full Name]<br />
-				[Your Street and Number]<br />
-				[Your Postal Code and City]<br />
-				Germany
+				Email: {PUBLIC_CONTACT_EMAIL}<br />
 			</p>
 
 			<h2>Disclaimer</h2>
@@ -84,24 +82,15 @@
 		<div>
 			<h2>Angaben gemäß § 5 TMG</h2>
 			<p>
-				[Ihr vollständiger Name]<br />
-				[Ihre Straße und Hausnummer]<br />
-				[Ihre Postleitzahl und Stadt]<br />
+				{PUBLIC_CONTACT_NAME}<br />
+				{PUBLIC_CONTACT_STREET}<br />
+				{PUBLIC_CONTACT_CITY}<br />
 				Deutschland
 			</p>
 
 			<h2>Kontakt</h2>
 			<p>
-				Telefon: [Ihre Telefonnummer]<br />
-				E-Mail: [Ihre E-Mail-Adresse]<br />
-			</p>
-
-			<h2>Inhaltlich Verantwortlicher gemäß § 55 Abs. 2 RStV</h2>
-			<p>
-				[Ihr vollständiger Name]<br />
-				[Ihre Straße und Hausnummer]<br />
-				[Ihre Postleitzahl und Stadt]<br />
-				Deutschland
+				E-Mail: {PUBLIC_CONTACT_EMAIL}<br />
 			</p>
 
 			<h2>Haftungsausschluss</h2>
