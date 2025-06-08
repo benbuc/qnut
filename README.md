@@ -1,7 +1,5 @@
 # Qnut - Detect Wheel Imbalances with Your Smartphone
 
-![Qnut Logo](static/favicon.png)
-
 Qnut is a web application that helps you detect potential wheel imbalances in your vehicle using your smartphone's built-in sensors.
 
 ## 📱 How It Works
