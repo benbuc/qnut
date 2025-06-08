@@ -23,7 +23,7 @@
 		<div class="mb-2 flex items-center justify-between">
 			<div class="w-24"></div>
 			<!-- Spacer for alignment -->
-			<h1 class="text-center text-3xl font-bold text-blue-600">WheelCheck</h1>
+			<h1 class="text-center text-3xl font-bold text-blue-600">Qnut</h1>
 			<div class="relative w-24">
 				<select
 					bind:value={locale.current}
@@ -52,15 +52,10 @@
 
 	<footer class="mt-12 text-center text-sm text-slate-500">
 		<div class="mb-4">
-			<DonateButton
-				text={t('supportWheelCheck')}
-				variant="secondary"
-				size="small"
-				color="blue-600"
-			/>
+			<DonateButton text={t('supportQnut')} variant="secondary" size="small" color="blue-600" />
 		</div>
 		<p>
-			© {new Date().getFullYear()} WheelCheck |
+			© {new Date().getFullYear()} Qnut |
 			<a href="/support" class="hover:underline">{t('support')}</a> |
 			<a href="/imprint" class="hover:underline">{t('imprint')}</a> |
 			<a href="/privacy" class="hover:underline">{t('privacy')}</a>

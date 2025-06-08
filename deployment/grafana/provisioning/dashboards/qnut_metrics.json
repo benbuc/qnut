@@ -112,7 +112,7 @@
             "uid": "Prometheus"
           },
           "editorMode": "code",
-          "expr": "rate(wheelcheck_measurements_total[5m])",
+          "expr": "rate(qnut_measurements_total[5m])",
           "legendFormat": "Measurements rate (per second)",
           "range": true,
           "refId": "A"
@@ -174,7 +174,7 @@
             "uid": "Prometheus"
           },
           "editorMode": "code",
-          "expr": "sum(wheelcheck_measurements_total)",
+          "expr": "sum(qnut_measurements_total)",
           "legendFormat": "Total measurements",
           "range": true,
           "refId": "A"
@@ -187,7 +187,7 @@
   "refresh": "10s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["wheelcheck"],
+  "tags": ["qnut"],
   "templating": {
     "list": []
   },
@@ -197,8 +197,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Wheelcheck Application Metrics",
-  "uid": "wheelcheck-metrics",
+  "title": "Qnut Application Metrics",
+  "uid": "qnut-metrics",
   "version": 1,
   "weekStart": ""
 }

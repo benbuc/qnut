@@ -6,7 +6,7 @@ const translations: Translations = {
 		imprint: 'Impressum',
 		privacy: 'Datenschutz',
 		madeWith: 'Made with ❤️ in Europe',
-		supportWheelCheck: 'WheelCheck unterstützen',
+		supportQnut: 'Qnut unterstützen',
 		buyMeCoffee: 'Spende einen Kaffee',
 		learnMore: 'Mehr erfahren'
 	},
@@ -15,7 +15,7 @@ const translations: Translations = {
 		imprint: 'Imprint',
 		privacy: 'Privacy',
 		madeWith: 'Made with ❤️ in Europe',
-		supportWheelCheck: 'Support WheelCheck',
+		supportQnut: 'Support Qnut',
 		buyMeCoffee: 'Buy me a coffee',
 		learnMore: 'Learn more'
 	}

@@ -7,7 +7,7 @@
 	<title>{t('support:support.title')} - {t('support:support.desc')}</title>
 	<meta
 		name="description"
-		content="Support the development of WheelCheck by making a donation and help us improve the app."
+		content="Support the development of Qnut by making a donation and help us improve the app."
 	/>
 </svelte:head>
 

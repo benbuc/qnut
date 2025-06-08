@@ -4,15 +4,15 @@ import { loadTranslationsForRoute } from '$lib/i18n.svelte';
 const translations: Translations = {
 	de: {
 		// Support page translations
-		'support.title': 'Unterstützen Sie WheelCheck',
-		'support.desc': 'Helfen Sie, WheelCheck besser zu machen',
+		'support.title': 'Unterstützen Sie Qnut',
+		'support.desc': 'Helfen Sie, Qnut besser zu machen',
 		'support.intro':
-			'WheelCheck ist eine kostenlose App, die aus persönlicher Leidenschaft für Technik und Autos entwickelt wurde. Ihre Unterstützung hilft, die App zu verbessern und neue Funktionen zu entwickeln.',
+			'Qnut ist eine kostenlose App, die aus persönlicher Leidenschaft für Technik und Autos entwickelt wurde. Ihre Unterstützung hilft, die App zu verbessern und neue Funktionen zu entwickeln.',
 
 		// Why support us section
 		'support.why.title': 'Warum uns unterstützen?',
 		'support.why.description':
-			'WheelCheck ist ein kostenloses Tool, das von <a class="underline" href="https://www.buymeacoffee.com/bebu" target="_blank">mir</a> entwickelt und gepflegt wird.',
+			'Qnut ist ein kostenloses Tool, das von <a class="underline" href="https://www.buymeacoffee.com/bebu" target="_blank">mir</a> entwickelt und gepflegt wird.',
 		'support.why.helpIntro':
 			'Ihre Unterstützung hilft, die App am Laufen zu halten und zu verbessern (ich hasse Werbebanner).',
 
@@ -31,7 +31,7 @@ const translations: Translations = {
 		'support.options.title': 'Unterstützungsmöglichkeiten',
 		'support.donate.title': 'Spenden',
 		'support.donate.desc':
-			'Wenn Sie WheelCheck nützlich finden, können Sie durch eine kleine Spende helfen, die Entwicklungskosten zu decken.',
+			'Wenn Sie Qnut nützlich finden, können Sie durch eine kleine Spende helfen, die Entwicklungskosten zu decken.',
 		'support.donate.button': 'Jetzt spenden',
 
 		'support.feedback.title': 'Feedback geben',
@@ -41,13 +41,13 @@ const translations: Translations = {
 
 		'support.share.title': 'Teilen Sie die App',
 		'support.share.desc':
-			'Helfen Sie anderen, WheelCheck zu entdecken, indem Sie es mit Freunden und in sozialen Medien teilen.',
+			'Helfen Sie anderen, Qnut zu entdecken, indem Sie es mit Freunden und in sozialen Medien teilen.',
 		'support.share.button': 'Teilen',
 
 		// Thank you section
 		'support.thanks.title': 'Vielen Dank!',
 		'support.thanks.desc':
-			'Jede Form der Unterstützung wird sehr geschätzt. Wir sind bestrebt, WheelCheck kontinuierlich zu verbessern und Ihre Erfahrung zu optimieren.',
+			'Jede Form der Unterstützung wird sehr geschätzt. Wir sind bestrebt, Qnut kontinuierlich zu verbessern und Ihre Erfahrung zu optimieren.',
 		'support.thanks.message': 'Danke, dass Sie eine Spende in Betracht ziehen. Jeder Kaffee zählt!',
 
 		// Navigation
@@ -55,15 +55,15 @@ const translations: Translations = {
 	},
 	en: {
 		// Support page translations
-		'support.title': 'Support WheelCheck',
-		'support.desc': 'Help Make WheelCheck Better',
+		'support.title': 'Support Qnut',
+		'support.desc': 'Help Make Qnut Better',
 		'support.intro':
-			'WheelCheck is a free app developed from a personal passion. Your support helps to keep the wheels turning.',
+			'Qnut is a free app developed from a personal passion. Your support helps to keep the wheels turning.',
 
 		// Why support us section
 		'support.why.title': 'Why Support?',
 		'support.why.description':
-			"WheelCheck is a free tool developed and maintained by <a class='underline' href='https://www.buymeacoffee.com/bebu' target='_blank'>me</a>.",
+			"Qnut is a free tool developed and maintained by <a class='underline' href='https://www.buymeacoffee.com/bebu' target='_blank'>me</a>.",
 		'support.why.helpIntro':
 			'Your support helps to keep the app running and improving (I hate ads).',
 
@@ -82,7 +82,7 @@ const translations: Translations = {
 		'support.options.title': 'Ways to Support',
 		'support.donate.title': 'Donate',
 		'support.donate.desc':
-			'If you find WheelCheck useful, consider a small donation to help cover development costs.',
+			'If you find Qnut useful, consider a small donation to help cover development costs.',
 		'support.donate.button': 'Donate Now',
 
 		'support.feedback.title': 'Provide Feedback',
@@ -92,13 +92,13 @@ const translations: Translations = {
 
 		'support.share.title': 'Share the App',
 		'support.share.desc':
-			'Help others discover WheelCheck by sharing it with friends and on social media.',
+			'Help others discover Qnut by sharing it with friends and on social media.',
 		'support.share.button': 'Share',
 
 		// Thank you section
 		'support.thanks.title': 'Thank You!',
 		'support.thanks.desc':
-			'Any form of support is greatly appreciated. We are committed to continuously improving WheelCheck and optimizing your experience.',
+			'Any form of support is greatly appreciated. We are committed to continuously improving Qnut and optimizing your experience.',
 		'support.thanks.message': 'Thank you for considering a donation. Every coffee counts!',
 
 		// Navigation

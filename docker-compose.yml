@@ -10,8 +10,8 @@ services:
       - ./logs:/app/static/logs
     labels:
       - traefik.enable=true
-      - traefik.constraint-label-stack=wheelcheck
-      - traefik.http.routers.wheelcheck-app.rule=Host(`${DOMAIN?Variable not set}`) && !PathPrefix(`/metrics`)
+      - traefik.constraint-label-stack=qnut
+      - traefik.http.routers.qnut-app.rule=Host(`${DOMAIN?Variable not set}`) && !PathPrefix(`/metrics`)
 
   proxy:
     image: traefik:v3.4
@@ -24,15 +24,15 @@ services:
     command:
       - --providers.docker
       - --providers.docker.exposedbydefault=false
-      - --providers.docker.constraints=Label(`traefik.constraint-label-stack`, `wheelcheck`)
+      - --providers.docker.constraints=Label(`traefik.constraint-label-stack`, `qnut`)
       - --metrics.prometheus
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
       - traefik.constraint-label=traefik-public
-      - traefik.http.routers.wheelcheck-proxy.rule=Host(`${DOMAIN?Variable not set}`) || Host(`grafana.${DOMAIN?Variable not set}`)
-      - traefik.http.routers.wheelcheck-proxy.tls=true
-      - traefik.http.routers.wheelcheck-proxy.tls.certresolver=le
+      - traefik.http.routers.qnut-proxy.rule=Host(`${DOMAIN?Variable not set}`) || Host(`grafana.${DOMAIN?Variable not set}`)
+      - traefik.http.routers.qnut-proxy.tls=true
+      - traefik.http.routers.qnut-proxy.tls.certresolver=le
 
   grafana:
     image: grafana/grafana:11.2.0
@@ -50,8 +50,8 @@ services:
       - GF_INSTALL_PLUGINS=grafana-piechart-panel
     labels:
       - traefik.enable=true
-      - traefik.constraint-label-stack=wheelcheck
-      - traefik.http.routers.wheelcheck-grafana.rule=Host(`grafana.${DOMAIN?Variable not set}`)
+      - traefik.constraint-label-stack=qnut
+      - traefik.http.routers.qnut-grafana.rule=Host(`grafana.${DOMAIN?Variable not set}`)
 
   prometheus:
     image: prom/prometheus:v2.54.1

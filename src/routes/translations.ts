@@ -3,15 +3,15 @@ import { loadTranslationsForRoute } from '$lib/i18n.svelte';
 
 const translations: Translations = {
 	de: {
-		title: 'WheelCheck - Radunwuchten Erkennen',
+		title: 'Qnut - Radunwuchten Erkennen',
 		meta: 'Erkennen Sie Radunwuchten mit den Sensoren Ihres Smartphones während der Fahrt.',
 		// Hero Section
 		'detect.title': 'Erkennen Sie Radunwuchten mit Ihrem Smartphone',
 		'detect.description':
-			'WheelCheck verwendet die integrierten Sensoren Ihres Smartphones, um potentielle Unwuchten zu erkennen.',
+			'Qnut verwendet die integrierten Sensoren Ihres Smartphones, um potentielle Unwuchten zu erkennen.',
 
 		// How It Works Section
-		'how.title': 'So funktioniert WheelCheck',
+		'how.title': 'So funktioniert Qnut',
 		'how.link': 'Mehr Details →',
 		'how.measure.title': '1. Vibrationen Messen',
 		'how.measure.description':
@@ -22,7 +22,7 @@ const translations: Translations = {
 
 		// Safety Warning
 		'safety.title': 'Wichtiger Sicherheitshinweis',
-		'safety.never': 'Bedienen Sie WheelCheck NIEMALS während der Fahrt',
+		'safety.never': 'Bedienen Sie Qnut NIEMALS während der Fahrt',
 		'safety.passenger': 'Lassen Sie immer einen Beifahrer die App während der Messungen bedienen',
 		'safety.mount': 'Befestigen Sie Ihr Telefon sicher, damit es sich nicht bewegt',
 		'safety.drive': 'Fahren Sie sicher und befolgen Sie alle Verkehrsregeln',
@@ -30,9 +30,9 @@ const translations: Translations = {
 			'Dieses Tool gibt nur Hinweise - konsultieren Sie einen professionellen Mechaniker für die Diagnose',
 
 		// Support Section
-		'supportSection.title': 'Unterstützen Sie WheelCheck',
+		'supportSection.title': 'Unterstützen Sie Qnut',
 		'supportSection.description':
-			'WheelCheck ist kostenlos nutzbar. Wenn Sie es nützlich finden, können Sie die Entwicklung unterstützen. Ich würde mich sehr darüber freuen!',
+			'Qnut ist kostenlos nutzbar. Wenn Sie es nützlich finden, können Sie die Entwicklung unterstützen. Ich würde mich sehr darüber freuen!',
 
 		// Requirements Section
 		'req.title': 'Was Sie benötigen',
@@ -47,15 +47,15 @@ const translations: Translations = {
 		'getStarted.safetyNote': 'Stellen Sie sicher, dass ein Beifahrer die App bedient'
 	},
 	en: {
-		title: 'WheelCheck - Detect Wheel Imbalances',
+		title: 'Qnut - Detect Wheel Imbalances',
 		meta: "Detect wheel imbalances using your smartphone's sensors while driving.",
 		// Hero Section
 		'detect.title': 'Detect Wheel Imbalances with Your Phone',
 		'detect.description':
-			"WheelCheck uses your smartphone's built-in sensors to help identify potential wheel imbalances while you drive.",
+			"Qnut uses your smartphone's built-in sensors to help identify potential wheel imbalances while you drive.",
 
 		// How It Works Section
-		'how.title': 'How WheelCheck Works',
+		'how.title': 'How Qnut Works',
 		'how.link': 'What to expect? →',
 		'how.measure.title': '1. Measure Vibrations',
 		'how.measure.description':
@@ -66,7 +66,7 @@ const translations: Translations = {
 
 		// Safety Warning
 		'safety.title': 'Important Safety Notice',
-		'safety.never': 'Never operate WheelCheck while driving',
+		'safety.never': 'Never operate Qnut while driving',
 		'safety.passenger': 'Always have a passenger handle the app during measurements',
 		'safety.mount': 'Securely mount your phone to prevent it from moving',
 		'safety.drive': 'Drive safely and follow all traffic laws',
@@ -74,9 +74,9 @@ const translations: Translations = {
 			'This tool provides indicators only - consult a professional mechanic for diagnosis',
 
 		// Support Section
-		'supportSection.title': 'Support WheelCheck',
+		'supportSection.title': 'Support Qnut',
 		'supportSection.description':
-			'WheelCheck is free to use. If you find it helpful, consider supporting the development. I would appreciate it a lot!',
+			'Qnut is free to use. If you find it helpful, consider supporting the development. I would appreciate it a lot!',
 
 		// Requirements Section
 		'req.title': "What You'll Need",

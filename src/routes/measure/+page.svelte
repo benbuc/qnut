@@ -19,7 +19,7 @@
 
 		// Create download link
 		const link = document.createElement('a');
-		link.download = `wheelcheck-spectrogram-${new Date().toISOString().split('T')[0]}.png`;
+		link.download = `qnut-spectrogram-${new Date().toISOString().split('T')[0]}.png`;
 		link.href = canvas.toDataURL('image/png');
 
 		// Trigger download
@@ -49,7 +49,7 @@
 </script>
 
 <svelte:head>
-	<title>{t('measure:measure.title')} - WheelCheck</title>
+	<title>{t('measure:measure.title')} - Qnut</title>
 </svelte:head>
 
 {#if cap.errorMsg}

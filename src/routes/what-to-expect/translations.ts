@@ -4,8 +4,8 @@ import { loadTranslationsForRoute } from '$lib/i18n.svelte';
 const translations: Translations = {
 	de: {
 		// Page title and meta
-		title: 'Was zu erwarten ist - WheelCheck',
-		meta: 'Erfahren Sie, worauf Sie in der Spektrogramm-Visualisierung von WheelCheck bei der Erkennung von Radunwuchten achten müssen.',
+		title: 'Was zu erwarten ist - Qnut',
+		meta: 'Erfahren Sie, worauf Sie in der Spektrogramm-Visualisierung von Qnut bei der Erkennung von Radunwuchten achten müssen.',
 
 		// Navigation
 		'nav.backToHome': 'Zurück zur Startseite',
@@ -64,15 +64,15 @@ const translations: Translations = {
 		// Disclaimer Section
 		'disclaimer.title': 'Wichtiger Hinweis',
 		'disclaimer.description':
-			'WheelCheck ist ein Diagnosewerkzeug, das nur Indikatoren liefert. Konsultieren Sie immer einen qualifizierten Mechaniker für professionelle Diagnose und Reparatur. Viele Faktoren können Vibrationen in Fahrzeugen verursachen, nicht nur Radunwuchten.',
+			'Qnut ist ein Diagnosewerkzeug, das nur Indikatoren liefert. Konsultieren Sie immer einen qualifizierten Mechaniker für professionelle Diagnose und Reparatur. Viele Faktoren können Vibrationen in Fahrzeugen verursachen, nicht nur Radunwuchten.',
 
 		// Navigation Button
 		'nav.test': 'Bereit, Ihre Räder zu testen 🚀'
 	},
 	en: {
 		// Page title and meta
-		title: 'What to Expect - WheelCheck',
-		meta: "Learn what to look for in WheelCheck's spectrogram visualization when detecting wheel imbalances.",
+		title: 'What to Expect - Qnut',
+		meta: "Learn what to look for in Qnut's spectrogram visualization when detecting wheel imbalances.",
 
 		// Navigation
 		'nav.backToHome': 'Back to Home',
@@ -132,7 +132,7 @@ const translations: Translations = {
 		// Disclaimer Section
 		'disclaimer.title': 'Important Disclaimer',
 		'disclaimer.description':
-			'WheelCheck is a diagnostic tool that provides indicators only. Always consult with a qualified mechanic for professional diagnosis and repair. Many factors can cause vibrations in vehicles beyond wheel imbalance.',
+			'Qnut is a diagnostic tool that provides indicators only. Always consult with a qualified mechanic for professional diagnosis and repair. Many factors can cause vibrations in vehicles beyond wheel imbalance.',
 
 		// Navigation Button
 		'nav.test': 'Ready to Test Your Wheels 🚀'
