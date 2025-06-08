@@ -99,7 +99,7 @@
 	</div>
 </div>
 
-{#if cap.measuring && cap.speedBuckets.size > 0}
+{#if cap.speedBuckets.size > 0}
 	<div class="space-y-3">
 		<SpectrogramCanvas bind:this={spectrogramCanvas} speedBuckets={cap.speedBuckets} />
 		<div class="flex items-center justify-between">
