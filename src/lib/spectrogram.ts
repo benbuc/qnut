@@ -8,13 +8,6 @@ const viridisColors = colormap({
 	alpha: 1
 });
 
-const confidenceColors = colormap({
-	colormap: 'cool', // Red-Yellow-Green colormap
-	nshades: 256,
-	format: 'rgba',
-	alpha: 1
-});
-
 export const BUFFER_SIZE = 128;
 const fft = new FFT(BUFFER_SIZE);
 
@@ -38,22 +31,7 @@ export function viridisColor(t: number): string {
 }
 
 export function confidenceColor(t: number): string {
-	try {
-		t = Math.max(0, Math.min(1, t));
-		const idx = Math.round(t * 255);
-		if (idx < 0 || idx >= confidenceColors.length) {
-			return 'rgba(255, 0, 0, 1)';
-		}
-
-		const color = confidenceColors[idx];
-		if (Array.isArray(color)) {
-			return `rgba(${color[0]},${color[1]},${color[2]},1)`;
-		}
-		return color;
-	} catch (e) {
-		console.error('Error in confidenceColor:', e);
-		return 'rgba(255, 0, 0, 1)';
-	}
+	return `hsl(${Math.round(t * 120)}, 100%, 50%)`; // Red to green gradient
 }
 
 export function getSpeedBucket(speed: number, step = 5): string {
@@ -103,13 +81,18 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 	const minSpectrum = Math.min(...valuesOfInterest);
 	const maxSpectrum = Math.max(...valuesOfInterest);
 
-	const availableBuckets = meanSpectra.length;
-	const rowHeight = height / Math.max(availableBuckets, 1);
+	const allSpeeds = meanSpectra.flatMap((s) => s.bucketRange);
+	const maxDisplaySpeed = Math.max(...allSpeeds);
+	const rowsNeeded = Math.ceil(maxDisplaySpeed / 5) + 1; // Assuming 5 km/h buckets
+	const rowHeight = height / rowsNeeded;
 
-	meanSpectra.forEach((spectra, index) => {
+	meanSpectra.forEach((spectra) => {
 		const mean = spectra.mean;
 		const confidence = spectra.confidence;
-		const y = height - (index + 1) * rowHeight;
+		const speedValue = spectra.bucketRange[0];
+
+		const normalizedPosition = speedValue / maxDisplaySpeed;
+		const y = height - normalizedPosition * height - rowHeight;
 
 		for (let i = 0; i < mean.length; i++) {
 			const magnitude = mean[i];
@@ -137,9 +120,9 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 
 	// Add speed labels as overlays
 	if (meanSpectra.length > 0) {
-		// Get min and max speeds for labels
+		// Always start at 0 km/h, only make max speed dynamic
+		const minSpeed = 0;
 		const allSpeeds = meanSpectra.flatMap((s) => s.bucketRange);
-		const minSpeed = Math.min(...allSpeeds);
 		const maxSpeed = Math.max(...allSpeeds);
 
 		// Configure text style with white font
@@ -157,29 +140,6 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 		const labelHeight = 16;
 		const minSpeedY = height - labelHeight - 8;
 		ctx.fillText(minSpeedText, 24, minSpeedY);
-
-		// Add confidence legend explanation
-		ctx.font = '12px system-ui, -apple-system, sans-serif';
-		ctx.fillText('Confidence: ', 24, 45);
-
-		// Draw confidence color bar
-		const legendWidth = 100;
-		const legendHeight = 10;
-		const gradient = ctx.createLinearGradient(16, 53, 16 + legendWidth, 53);
-		gradient.addColorStop(0, confidenceColor(0)); // Red (min confidence)
-		gradient.addColorStop(1, confidenceColor(1)); // Green (max confidence)
-
-		ctx.fillStyle = gradient;
-		ctx.fillRect(24, 61, legendWidth, legendHeight);
-
-		// Add confidence labels
-		ctx.fillStyle = 'white';
-		ctx.font = '10px system-ui, -apple-system, sans-serif';
-		ctx.textBaseline = 'top';
-		ctx.textAlign = 'left';
-		ctx.fillText('Low', 24, 61 + legendHeight + 2);
-		ctx.textAlign = 'right';
-		ctx.fillText('High', 23 + legendWidth, 61 + legendHeight + 2);
 	}
 }
 
