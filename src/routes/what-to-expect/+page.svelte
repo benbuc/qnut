@@ -4,12 +4,11 @@
 	import SpectrogramCanvas from '$lib/SpectrogramCanvas.svelte';
 	import { t } from '$lib/i18n.svelte';
 
-	const bufferSize = 128;
 	let speedBuckets = $state(new Map<string, number[][]>());
 
 	onMount(() => {
 		// Generate test data to show what an imbalanced wheel looks like
-		const testBuckets = generateTestData(bufferSize);
+		const testBuckets = generateTestData();
 
 		// Set the speedBuckets to trigger the canvas to render
 		speedBuckets = testBuckets;
@@ -43,7 +42,7 @@
 <!-- Spectrogram Visualization -->
 <div class="mb-8 rounded-lg bg-white p-6 shadow-sm">
 	<h3 class="mb-4 text-lg font-semibold text-slate-800">{t('what-to-expect:sample.title')}</h3>
-	<SpectrogramCanvas {speedBuckets} {bufferSize} />
+	<SpectrogramCanvas {speedBuckets} />
 	<p class="mt-3 text-center text-sm text-slate-500">
 		{t('what-to-expect:sample.description')}
 	</p>

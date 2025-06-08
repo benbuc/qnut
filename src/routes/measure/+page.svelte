@@ -42,7 +42,7 @@
 	onMount(() => {
 		if (dev) {
 			// For development, populate with test data
-			const testBuckets = generateTestData(cap.bufferSize);
+			const testBuckets = generateTestData();
 			cap.speedBuckets = testBuckets;
 		}
 	});
@@ -90,11 +90,7 @@
 
 {#if cap.measuring && cap.speedBuckets.size > 0}
 	<div class="space-y-3">
-		<SpectrogramCanvas
-			bind:this={spectrogramCanvas}
-			speedBuckets={cap.speedBuckets}
-			bufferSize={cap.bufferSize}
-		/>
+		<SpectrogramCanvas bind:this={spectrogramCanvas} speedBuckets={cap.speedBuckets} />
 		<div class="flex items-center justify-between">
 			<a href="/what-to-expect" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">
 				{t('measure:measure.helpLink')}

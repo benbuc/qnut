@@ -1,4 +1,5 @@
 import colormap from 'colormap';
+import FFT from 'fft.js';
 
 const viridisColors = colormap({
 	colormap: 'viridis',
@@ -13,6 +14,9 @@ const confidenceColors = colormap({
 	format: 'rgba',
 	alpha: 1
 });
+
+export const BUFFER_SIZE = 128;
+const fft = new FFT(BUFFER_SIZE);
 
 export function viridisColor(t: number): string {
 	try {
@@ -57,18 +61,14 @@ export function getSpeedBucket(speed: number, step = 5): string {
 	return `${bucket}-${bucket + step}`;
 }
 
-export function drawSpectrogram(
-	canvas: HTMLCanvasElement,
-	speedBuckets: Map<string, number[][]>,
-	bufferSize: number
-) {
+export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<string, number[][]>) {
 	const ctx = canvas.getContext('2d');
 	if (!ctx) return;
 
 	const width = canvas.width;
 	const height = canvas.height;
 	ctx.clearRect(0, 0, width, height);
-	const barWidth = width / (bufferSize / 2) + 0.5;
+	const barWidth = width / (BUFFER_SIZE / 2) + 0.5;
 
 	ctx.fillStyle = viridisColor(0);
 	ctx.fillRect(0, 0, width, height);
@@ -84,7 +84,7 @@ export function drawSpectrogram(
 				});
 				return acc;
 			},
-			new Array(bufferSize / 2).fill(0)
+			new Array(BUFFER_SIZE / 2).fill(0)
 		);
 		meanSpectra.push({ mean, bucketRange: bucket.split('-').map(Number) });
 	}
@@ -92,7 +92,7 @@ export function drawSpectrogram(
 	meanSpectra.sort((a, b) => a.bucketRange[0] - b.bucketRange[0]);
 
 	// min and max for normalization
-	const lowerFrequencyIgnoreCount = Math.floor((bufferSize / 2) * 0.1);
+	const lowerFrequencyIgnoreCount = Math.floor((BUFFER_SIZE / 2) * 0.1);
 	const lowerSpeedsIgnoreCount = Math.floor(meanSpectra.length * 0.3);
 	const valuesOfInterest = meanSpectra
 		.slice(lowerSpeedsIgnoreCount)
@@ -186,7 +186,7 @@ export function drawSpectrogram(
 	}
 }
 
-export function generateTestData(bufferSize: number): Map<string, number[][]> {
+export function generateTestData(): Map<string, number[][]> {
 	// generate idealized representation of what to look out for in the spectrogram
 	const speedBuckets = new Map<string, number[][]>();
 	const testSpeeds = [...Array.from({ length: 32 }, (_, i) => i * 5)];
@@ -200,20 +200,42 @@ export function generateTestData(bufferSize: number): Map<string, number[][]> {
 		const measurementCount = Math.min(Math.floor(speed / 10) + 1, 25);
 
 		for (let i = 0; i < measurementCount; i++) {
-			const fakeSpectrum = Array(bufferSize / 2)
+			const fakeAcceleration = Array(BUFFER_SIZE)
 				.fill(0)
 				.map((_, i) => {
 					let value = 0;
-					value += Math.exp(-Math.pow(i - speed / 3, 2) / 5) * Math.pow(speed, 2);
+					value += Math.sin((i / BUFFER_SIZE) * Math.PI * 2 * (speed / 4));
+					value *= Math.pow(speed / 100, 2);
 
-					value += Math.random() * 5000;
+					value += Math.random() * 0.5;
 
 					return value;
 				});
+
+			const fakeSpectrum = applyFFT(fakeAcceleration);
 			testData.push(fakeSpectrum);
 		}
 		speedBuckets.set(bucket, testData);
 	});
 
 	return speedBuckets;
+}
+
+export function applyFFT(dataBuffer: number[]): number[] {
+	// Apply Hann window function to reduce spectral leakage
+	const windowed = dataBuffer.map(
+		(val, i) => val * (0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (BUFFER_SIZE - 1)))
+	);
+
+	const input = new Array(BUFFER_SIZE).fill(0);
+	const output = new Array(BUFFER_SIZE);
+
+	for (let i = 0; i < BUFFER_SIZE; i++) input[i] = windowed[i];
+
+	fft.realTransform(output, input);
+	fft.completeSpectrum(output);
+
+	return output
+		.slice(0, BUFFER_SIZE / 2)
+		.map((v, i) => Math.sqrt(output[2 * i] ** 2 + output[2 * i + 1] ** 2));
 }

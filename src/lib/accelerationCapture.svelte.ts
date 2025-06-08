@@ -1,8 +1,5 @@
-import FFT from 'fft.js';
-import { getSpeedBucket } from './spectrogram';
+import { getSpeedBucket, applyFFT, BUFFER_SIZE } from './spectrogram';
 import { t } from './i18n.svelte';
-
-const DEFAULT_BUFFER_SIZE = 128;
 
 export class AccelerationCapture {
 	currentSpeed: number = $state(-1);
@@ -10,17 +7,10 @@ export class AccelerationCapture {
 	measuring: boolean = $state(false);
 	errorMsg: string = $state('');
 	warningMsg: string = $state('');
-	bufferSize: number;
 
-	private fft: FFT;
 	private buffer: number[] = [];
 	private motionListenerActive: boolean = false;
 	private geoWatchId: number | null = null;
-
-	constructor(bufferSize = DEFAULT_BUFFER_SIZE) {
-		this.bufferSize = bufferSize;
-		this.fft = new FFT(bufferSize);
-	}
 
 	private handleMotion = (event: DeviceMotionEvent) => {
 		const acc = event.acceleration;
@@ -29,27 +19,13 @@ export class AccelerationCapture {
 		const magnitude = Math.sqrt(acc.x ** 2 + acc.y ** 2 + acc.z ** 2);
 		this.buffer.push(magnitude);
 
-		if (this.buffer.length < this.bufferSize) return;
+		if (this.buffer.length < BUFFER_SIZE) return;
 		if (this.currentSpeed < 0) {
 			this.buffer = [];
 			return;
 		}
 
-		const windowed = this.buffer.map(
-			(val, i) => val * (0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (this.bufferSize - 1)))
-		);
-
-		const input = new Array(this.bufferSize).fill(0);
-		const output = new Array(this.bufferSize);
-
-		for (let i = 0; i < this.bufferSize; i++) input[i] = windowed[i];
-
-		this.fft.realTransform(output, input);
-		this.fft.completeSpectrum(output);
-
-		const magnitudes = output
-			.slice(0, this.bufferSize / 2)
-			.map((v, i) => Math.sqrt(output[2 * i] ** 2 + output[2 * i + 1] ** 2));
+		const magnitudes = applyFFT(this.buffer);
 
 		const bucket = getSpeedBucket(this.currentSpeed);
 

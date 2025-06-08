@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { drawSpectrogram, generateTestData } from '$lib/spectrogram';
+	import { drawSpectrogram } from '$lib/spectrogram';
 
 	interface Props {
 		speedBuckets: Map<string, number[][]>;
-		bufferSize: number;
 	}
 
-	let { speedBuckets, bufferSize }: Props = $props();
+	let { speedBuckets }: Props = $props();
 
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
@@ -32,7 +31,7 @@
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 		if (speedBuckets.size > 0) {
-			drawSpectrogram(canvas, speedBuckets, bufferSize);
+			drawSpectrogram(canvas, speedBuckets);
 		}
 	}
 
