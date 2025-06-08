@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { drawSpectrogram } from '$lib/spectrogram';
-	import CalculationMethodToggle from './CalculationMethodToggle.svelte';
+	import DevSettingsPanel from './DevSettingsPanel.svelte';
 
 	interface Props {
 		speedBuckets: Map<string, number[][]>;
@@ -71,7 +71,7 @@
 	></canvas>
 
 	<div class="mt-4">
-		<CalculationMethodToggle />
+		<DevSettingsPanel />
 	</div>
 </div>
 

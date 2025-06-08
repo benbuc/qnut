@@ -1,3 +1,4 @@
 export const settings = $state({
-	useMedian: false
+	useMedian: false,
+	normalizePerSpeedLine: false
 });

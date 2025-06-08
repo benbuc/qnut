@@ -101,14 +101,34 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 
 	spectraResults.sort((a, b) => a.bucketRange[0] - b.bucketRange[0]);
 
-	// min and max for normalization
+	/**
+	 * Normalization Strategy
+	 *
+	 * We have two approaches for color normalization:
+	 * 1. Global normalization - The entire spectrogram uses the same min/max values,
+	 *    making it easier to compare intensity across different speeds
+	 * 2. Per-speed-line normalization - Each speed line has its own min/max values,
+	 *    which enhances details at each speed but makes direct comparison harder
+	 */
+
+	// Common frequency filtering for both normalization methods
 	const lowerFrequencyIgnoreCount = Math.floor((BUFFER_SIZE / 2) * 0.1);
 	const lowerSpeedsIgnoreCount = Math.floor(spectraResults.length * 0.3);
-	const valuesOfInterest = spectraResults
-		.slice(lowerSpeedsIgnoreCount)
-		.flatMap((obj) => obj.values.slice(lowerFrequencyIgnoreCount));
-	const minSpectrum = Math.min(...valuesOfInterest);
-	const maxSpectrum = Math.max(...valuesOfInterest);
+
+	// Global normalization factors (used when normalizePerSpeedLine is false)
+	let globalMinSpectrum = 0;
+	let globalMaxSpectrum = 0;
+
+	// Calculate global min/max if using global normalization
+	if (!settings.normalizePerSpeedLine) {
+		const valuesOfInterest = spectraResults
+			.slice(lowerSpeedsIgnoreCount)
+			.flatMap((obj) => obj.values.slice(lowerFrequencyIgnoreCount));
+		globalMinSpectrum = Math.min(...valuesOfInterest);
+		globalMaxSpectrum = Math.max(...valuesOfInterest);
+	}
+
+	// Per-speed-line normalization factors will be calculated during rendering for each speed line
 
 	const allSpeeds = spectraResults.flatMap((s) => s.bucketRange);
 	const maxDisplaySpeed = Math.max(...allSpeeds);
@@ -123,6 +143,17 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 		const normalizedPosition = speedValue / maxDisplaySpeed;
 		const y = height - normalizedPosition * height - rowHeight;
 
+		// For per-line normalization, calculate min/max for this speed line
+		let lineMinSpectrum = 0;
+		let lineMaxSpectrum = 0;
+
+		if (settings.normalizePerSpeedLine) {
+			// Only consider frequencies above the lower frequency threshold
+			const lineValuesOfInterest = values.slice(lowerFrequencyIgnoreCount);
+			lineMinSpectrum = Math.min(...lineValuesOfInterest);
+			lineMaxSpectrum = Math.max(...lineValuesOfInterest);
+		}
+
 		for (let i = 0; i < values.length; i++) {
 			const magnitude = values[i];
 			if (isNaN(magnitude)) continue;
@@ -131,7 +162,19 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 			if (i < 2) {
 				ctx.fillStyle = confidenceColor(confidence);
 			} else {
-				let norm = (magnitude - minSpectrum) / (maxSpectrum - minSpectrum);
+				let minValue, maxValue;
+
+				if (settings.normalizePerSpeedLine) {
+					minValue = lineMinSpectrum;
+					maxValue = lineMaxSpectrum;
+				} else {
+					minValue = globalMinSpectrum;
+					maxValue = globalMaxSpectrum;
+				}
+
+				// Prevent division by zero
+				const range = maxValue - minValue || 1;
+				let norm = (magnitude - minValue) / range;
 				norm = Math.max(0, Math.min(1, norm));
 				ctx.fillStyle = viridisColor(norm);
 			}
