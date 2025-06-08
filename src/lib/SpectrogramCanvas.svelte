@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { drawSpectrogram } from '$lib/spectrogram';
+	import CalculationMethodToggle from './CalculationMethodToggle.svelte';
 
 	interface Props {
 		speedBuckets: Map<string, number[][]>;
@@ -39,7 +40,6 @@
 		if (!canvas) return;
 		initCanvas();
 	}
-
 	// React to changes in speedBuckets
 	$effect(() => {
 		if (speedBuckets && canvas) {
@@ -57,11 +57,27 @@
 		};
 
 		window.addEventListener('resize', handleResize);
-		return () => window.removeEventListener('resize', handleResize);
+
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
 	});
 </script>
 
-<canvas
-	bind:this={canvas}
-	class="mx-auto aspect-square w-full max-w-md rounded border border-slate-100 shadow-md"
-></canvas>
+<div class="spectrogram-container">
+	<canvas
+		bind:this={canvas}
+		class="mx-auto aspect-square w-full max-w-md rounded border border-slate-100 shadow-md"
+	></canvas>
+
+	<div class="mt-4">
+		<CalculationMethodToggle />
+	</div>
+</div>
+
+<style>
+	.spectrogram-container {
+		display: flex;
+		flex-direction: column;
+	}
+</style>

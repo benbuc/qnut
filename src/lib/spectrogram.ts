@@ -1,5 +1,6 @@
 import colormap from 'colormap';
 import FFT from 'fft.js';
+import { settings } from './settings.svelte';
 
 const viridisColors = colormap({
 	colormap: 'viridis',
@@ -39,6 +40,16 @@ export function getSpeedBucket(speed: number, step = 5): string {
 	return `${bucket}-${bucket + step}`;
 }
 
+function calculateMedian(values: number[]): number {
+	if (values.length === 0) return 0;
+	const sorted = [...values].sort((a, b) => a - b);
+	const middle = Math.floor(sorted.length / 2);
+	if (sorted.length % 2 === 0) {
+		return (sorted[middle - 1] + sorted[middle]) / 2;
+	}
+	return sorted[middle];
+}
+
 export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<string, number[][]>) {
 	const ctx = canvas.getContext('2d');
 	if (!ctx) return;
@@ -53,49 +64,67 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 
 	if (speedBuckets.size === 0) return;
 
-	const meanSpectra: { confidence: number; mean: number[]; bucketRange: number[] }[] = [];
+	const spectraResults: { confidence: number; values: number[]; bucketRange: number[] }[] = [];
 	for (const [bucket, spectra] of speedBuckets.entries()) {
 		const measurementCount = spectra.length || 0;
 		const confidence = Math.min(measurementCount / 20, 1);
 
-		const mean = spectra.reduce(
-			(acc, spectrum) => {
+		if (settings.useMedian) {
+			const medians = new Array(BUFFER_SIZE / 2).fill(0);
+			const frequencyColumns: number[][] = Array.from({ length: BUFFER_SIZE / 2 }, () => []);
+			spectra.forEach((spectrum) => {
 				spectrum.forEach((value, index) => {
-					acc[index] = (acc[index] || 0) + (value * confidence) / spectra.length;
+					frequencyColumns[index].push(value);
 				});
-				return acc;
-			},
-			new Array(BUFFER_SIZE / 2).fill(0)
-		);
-		meanSpectra.push({ confidence, mean, bucketRange: bucket.split('-').map(Number) });
+			});
+			frequencyColumns.forEach((values, index) => {
+				medians[index] = calculateMedian(values);
+			});
+			spectraResults.push({
+				confidence,
+				values: medians,
+				bucketRange: bucket.split('-').map(Number)
+			});
+		} else {
+			const mean = spectra.reduce(
+				(acc, spectrum) => {
+					spectrum.forEach((value, index) => {
+						acc[index] = (acc[index] || 0) + (value * confidence) / spectra.length;
+					});
+					return acc;
+				},
+				new Array(BUFFER_SIZE / 2).fill(0)
+			);
+			spectraResults.push({ confidence, values: mean, bucketRange: bucket.split('-').map(Number) });
+		}
 	}
 
-	meanSpectra.sort((a, b) => a.bucketRange[0] - b.bucketRange[0]);
+	spectraResults.sort((a, b) => a.bucketRange[0] - b.bucketRange[0]);
 
 	// min and max for normalization
 	const lowerFrequencyIgnoreCount = Math.floor((BUFFER_SIZE / 2) * 0.1);
-	const lowerSpeedsIgnoreCount = Math.floor(meanSpectra.length * 0.3);
-	const valuesOfInterest = meanSpectra
+	const lowerSpeedsIgnoreCount = Math.floor(spectraResults.length * 0.3);
+	const valuesOfInterest = spectraResults
 		.slice(lowerSpeedsIgnoreCount)
-		.flatMap((obj) => obj.mean.slice(lowerFrequencyIgnoreCount));
+		.flatMap((obj) => obj.values.slice(lowerFrequencyIgnoreCount));
 	const minSpectrum = Math.min(...valuesOfInterest);
 	const maxSpectrum = Math.max(...valuesOfInterest);
 
-	const allSpeeds = meanSpectra.flatMap((s) => s.bucketRange);
+	const allSpeeds = spectraResults.flatMap((s) => s.bucketRange);
 	const maxDisplaySpeed = Math.max(...allSpeeds);
 	const rowsNeeded = Math.ceil(maxDisplaySpeed / 5) + 1; // Assuming 5 km/h buckets
 	const rowHeight = height / rowsNeeded;
 
-	meanSpectra.forEach((spectra) => {
-		const mean = spectra.mean;
+	spectraResults.forEach((spectra) => {
+		const values = spectra.values;
 		const confidence = spectra.confidence;
 		const speedValue = spectra.bucketRange[0];
 
 		const normalizedPosition = speedValue / maxDisplaySpeed;
 		const y = height - normalizedPosition * height - rowHeight;
 
-		for (let i = 0; i < mean.length; i++) {
-			const magnitude = mean[i];
+		for (let i = 0; i < values.length; i++) {
+			const magnitude = values[i];
 			if (isNaN(magnitude)) continue;
 
 			// First two columns show confidence data
@@ -119,10 +148,10 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 	});
 
 	// Add speed labels as overlays
-	if (meanSpectra.length > 0) {
+	if (spectraResults.length > 0) {
 		// Always start at 0 km/h, only make max speed dynamic
 		const minSpeed = 0;
-		const allSpeeds = meanSpectra.flatMap((s) => s.bucketRange);
+		const allSpeeds = spectraResults.flatMap((s) => s.bucketRange);
 		const maxSpeed = Math.max(...allSpeeds);
 
 		// Configure text style with white font
