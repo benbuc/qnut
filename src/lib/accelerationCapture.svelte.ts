@@ -3,6 +3,7 @@ import { t } from './i18n.svelte';
 
 export class AccelerationCapture {
 	currentSpeed: number = $state(-1);
+	gpsAccuracy: number = $state(-1);
 	speedBuckets: Map<string, number[][]> = $state(new Map());
 	measuring: boolean = $state(false);
 	errorMsg: string = $state('');
@@ -11,6 +12,7 @@ export class AccelerationCapture {
 	private buffer: number[] = [];
 	private motionListenerActive: boolean = false;
 	private geoWatchId: number | null = null;
+	accuracyThreshold: number = 20;
 
 	private handleMotion = (event: DeviceMotionEvent) => {
 		const acc = event.acceleration;
@@ -21,6 +23,12 @@ export class AccelerationCapture {
 
 		if (this.buffer.length < BUFFER_SIZE) return;
 		if (this.currentSpeed < 0) {
+			this.buffer = [];
+			return;
+		}
+
+		// Skip measurements with bad GPS accuracy
+		if (this.gpsAccuracy > this.accuracyThreshold) {
 			this.buffer = [];
 			return;
 		}
@@ -98,6 +106,7 @@ export class AccelerationCapture {
 		if (this.geoWatchId !== null) {
 			navigator.geolocation.clearWatch(this.geoWatchId);
 			this.geoWatchId = null;
+			this.gpsAccuracy = -1; // Reset GPS accuracy when stopping
 		}
 	}
 
@@ -120,10 +129,17 @@ export class AccelerationCapture {
 
 			this.geoWatchId = navigator.geolocation.watchPosition(
 				(pos) => {
+					this.gpsAccuracy = pos.coords.accuracy;
+
 					if (pos.coords.speed !== undefined && pos.coords.speed !== null) {
 						this.currentSpeed = Math.max(0, pos.coords.speed * 3.6);
-						this.warningMsg = '';
-						this.errorMsg = '';
+
+						if (pos.coords.accuracy > this.accuracyThreshold) {
+							this.warningMsg = t('measure:error.noSpeed');
+						} else {
+							this.warningMsg = '';
+							this.errorMsg = '';
+						}
 					} else {
 						this.currentSpeed = -1;
 						this.warningMsg = t('measure:error.noSpeed');
@@ -132,6 +148,7 @@ export class AccelerationCapture {
 				(err) => {
 					this.errorMsg = 'Geolocation error: ' + err.message;
 					this.currentSpeed = -1;
+					this.gpsAccuracy = -1;
 				},
 				{
 					enableHighAccuracy: true,

@@ -68,10 +68,21 @@
 {/if}
 
 <div class="mb-3 rounded-lg bg-white p-3 shadow-sm">
-	<div class="mb-2 text-center text-xl font-bold text-blue-600">
-		{cap.currentSpeed >= 0
-			? t('measure:measure.currentSpeed', { speed: cap.currentSpeed.toFixed(1) })
-			: t('measure:measure.notMeasuring')}
+	<div class="mb-2 text-center">
+		<div class="text-xl font-bold text-blue-600">
+			{cap.currentSpeed >= 0
+				? t('measure:measure.currentSpeed', { speed: cap.currentSpeed.toFixed(1) })
+				: t('measure:measure.notMeasuring')}
+		</div>
+		{#if cap.gpsAccuracy > 0}
+			<div
+				class:text-yellow-600={cap.gpsAccuracy > cap.accuracyThreshold}
+				class:text-green-600={cap.gpsAccuracy <= cap.accuracyThreshold}
+				class="text-sm"
+			>
+				{t('measure:measure.gpsAccuracy', { accuracy: cap.gpsAccuracy.toFixed(1) })}
+			</div>
+		{/if}
 	</div>
 
 	<div class="flex items-center justify-center gap-3">
