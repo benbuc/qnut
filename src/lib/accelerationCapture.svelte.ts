@@ -34,6 +34,15 @@ export class AccelerationCapture {
 		}
 
 		this.speedBuckets.get(bucket)!.push(magnitudes);
+
+		// Sort the bucket based on the first column (index 0) of each measurement
+		// Lower values in the first column indicate better quality
+		const sortedBucket = this.speedBuckets.get(bucket)!.sort((a, b) => a[0] - b[0]);
+
+		if (sortedBucket.length > 20) {
+			sortedBucket.splice(20);
+		}
+
 		this.buffer = [];
 
 		this.speedBuckets = new Map(this.speedBuckets);
