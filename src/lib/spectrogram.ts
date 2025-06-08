@@ -75,18 +75,22 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 
 	if (speedBuckets.size === 0) return;
 
-	const meanSpectra: { mean: number[]; bucketRange: number[] }[] = [];
+	const meanSpectra: { confidence: number; mean: number[]; bucketRange: number[] }[] = [];
 	for (const [bucket, spectra] of speedBuckets.entries()) {
+		const measurementCount = bucket.length || 0;
+		const confidence = Math.min(measurementCount / 20, 1);
+
 		const mean = spectra.reduce(
 			(acc, spectrum) => {
 				spectrum.forEach((value, index) => {
 					acc[index] = (acc[index] || 0) + value / spectra.length;
+					acc[index] *= confidence; // Apply confidence to the mean
 				});
 				return acc;
 			},
 			new Array(BUFFER_SIZE / 2).fill(0)
 		);
-		meanSpectra.push({ mean, bucketRange: bucket.split('-').map(Number) });
+		meanSpectra.push({ confidence, mean, bucketRange: bucket.split('-').map(Number) });
 	}
 
 	meanSpectra.sort((a, b) => a.bucketRange[0] - b.bucketRange[0]);
@@ -105,14 +109,8 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 
 	meanSpectra.forEach((spectra, index) => {
 		const mean = spectra.mean;
+		const confidence = spectra.confidence;
 		const y = height - (index + 1) * rowHeight;
-
-		// Get the count of measurements for this speed bucket
-		const bucket = `${spectra.bucketRange[0]}-${spectra.bucketRange[1]}`;
-		const measurementCount = speedBuckets.get(bucket)?.length || 0;
-
-		// Calculate confidence (0 = low/red, 1 = high/green) with max at 20 measurements
-		const confidence = Math.min(measurementCount / 20, 1);
 
 		for (let i = 0; i < mean.length; i++) {
 			const magnitude = mean[i];
