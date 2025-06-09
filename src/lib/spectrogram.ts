@@ -36,6 +36,7 @@ export function confidenceColor(t: number): string {
 }
 
 export function getSpeedBucket(speed: number, step = 5): string {
+	// TODO: Default step size of 5 should be configurable
 	const bucket = Math.floor(speed / step) * step;
 	return `${bucket}-${bucket + step}`;
 }
@@ -67,6 +68,7 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 	const spectraResults: { confidence: number; values: number[]; bucketRange: number[] }[] = [];
 	for (const [bucket, spectra] of speedBuckets.entries()) {
 		const measurementCount = spectra.length || 0;
+		// TODO: Magic number 20 for confidence calculation should be configurable
 		const confidence = Math.min(measurementCount / 20, 1);
 
 		if (settings.useMedian) {
@@ -132,6 +134,7 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 
 	const allSpeeds = spectraResults.flatMap((s) => s.bucketRange);
 	const maxDisplaySpeed = Math.max(...allSpeeds);
+	// TODO: Speed bucket size of 5 km/h is hardcoded here and in getSpeedBucket
 	const rowsNeeded = Math.ceil(maxDisplaySpeed / 5) + 1; // Assuming 5 km/h buckets
 	const rowHeight = height / rowsNeeded;
 
@@ -159,6 +162,7 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 			if (isNaN(magnitude)) continue;
 
 			// First two columns show confidence data
+			// TODO: Magic number 2 for confidence columns should be documented
 			if (i < 2) {
 				ctx.fillStyle = confidenceColor(confidence);
 			} else {
@@ -199,6 +203,7 @@ export function drawSpectrogram(canvas: HTMLCanvasElement, speedBuckets: Map<str
 
 		// Configure text style with white font
 		ctx.fillStyle = 'white';
+		// TODO: Font configuration should be centralized
 		ctx.font = 'bold 14px system-ui, -apple-system, sans-serif';
 		ctx.textBaseline = 'top';
 		ctx.textAlign = 'left';
@@ -253,6 +258,7 @@ export function generateTestData(): Map<string, number[][]> {
 export function applyFFT(dataBuffer: number[]): number[] {
 	// Apply Hann window function to reduce spectral leakage
 	const windowed = dataBuffer.map(
+		// TODO: Hann window coefficients could be pre-calculated for performance
 		(val, i) => val * (0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (BUFFER_SIZE - 1)))
 	);
 

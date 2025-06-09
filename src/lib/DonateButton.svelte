@@ -6,6 +6,7 @@
 	export let variant = 'primary'; // 'primary' (filled) or 'secondary' (outlined)
 
 	// Replace with your actual buymeacoffee username once you create an account
+	// TODO: Username should be configurable through environment variables or config file
 	export let username = 'bebu';
 
 	// Size classes based on the size prop

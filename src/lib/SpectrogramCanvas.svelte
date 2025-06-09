@@ -23,11 +23,13 @@
 
 		// Make canvas square based on its container width
 		const rect = canvas.getBoundingClientRect();
+		// TODO: Magic number 400 for max canvas size should be configurable
 		const size = Math.min(rect.width, 400); // Max size of 400px
 
 		canvas.width = size;
 		canvas.height = size;
 
+		// TODO: Hardcoded background color should be configurable or use CSS variables
 		ctx.fillStyle = '#f8fafc';
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 

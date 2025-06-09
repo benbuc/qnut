@@ -12,6 +12,7 @@ export class AccelerationCapture {
 	private buffer: number[] = [];
 	private motionListenerActive: boolean = false;
 	private geoWatchId: number | null = null;
+	// TODO: Make accuracy threshold configurable instead of hardcoded
 	accuracyThreshold: number = 20;
 
 	private handleMotion = (event: DeviceMotionEvent) => {
@@ -47,6 +48,7 @@ export class AccelerationCapture {
 		// Lower values in the first column indicate better quality
 		const sortedBucket = this.speedBuckets.get(bucket)!.sort((a, b) => a[0] - b[0]);
 
+		// TODO: Make max measurements per bucket configurable instead of hardcoded 20
 		if (sortedBucket.length > 20) {
 			sortedBucket.splice(20);
 		}
@@ -81,6 +83,7 @@ export class AccelerationCapture {
 
 			if (result) {
 				this.measuring = true;
+				// TODO: Add error handling for metrics endpoint failure - should not block measurement
 				fetch('/api/metrics/increment', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
@@ -112,6 +115,7 @@ export class AccelerationCapture {
 
 	private async requestPermissionAndListen(): Promise<boolean> {
 		try {
+			// TODO: This type casting is brittle - consider using proper types
 			const DeviceMotionEventWithPermission = window.DeviceMotionEvent as unknown as {
 				requestPermission?: () => Promise<string>;
 			};
@@ -132,6 +136,7 @@ export class AccelerationCapture {
 					this.gpsAccuracy = pos.coords.accuracy;
 
 					if (pos.coords.speed !== undefined && pos.coords.speed !== null) {
+						// TODO: Magic number 3.6 for m/s to km/h conversion should be a named constant
 						this.currentSpeed = Math.max(0, pos.coords.speed * 3.6);
 
 						if (pos.coords.accuracy > this.accuracyThreshold) {
@@ -153,6 +158,7 @@ export class AccelerationCapture {
 				{
 					enableHighAccuracy: true,
 					maximumAge: 0,
+					// TODO: Make timeout configurable instead of hardcoded 5000ms
 					timeout: 5000
 				}
 			);
