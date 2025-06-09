@@ -11,6 +11,8 @@
 	/>
 </svelte:head>
 
+<!-- eslint-disable svelte/no-at-html-tags -->
+
 <div class="mb-8 text-center">
 	<div class="mb-4 text-6xl">☕</div>
 	<h2 class="mb-4 text-2xl font-bold text-slate-800">{t('support:support.title')}</h2>

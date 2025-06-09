@@ -20,6 +20,8 @@
 	<meta name="description" content={t('what-to-expect:meta')} />
 </svelte:head>
 
+<!-- eslint-disable svelte/no-at-html-tags -->
+
 <!-- Back navigation -->
 <div class="mb-6 flex justify-between">
 	<a href="/" class="inline-flex items-center text-blue-600 hover:text-blue-800">

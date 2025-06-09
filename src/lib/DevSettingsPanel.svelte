@@ -4,10 +4,10 @@
 	import NormalizationToggle from './NormalizationToggle.svelte';
 
 	// Whether to show the dev settings panel
-	let showDevSettings = false;
+	let showDevSettings = $state(false);
 
 	// Local copies for debugging display
-	$: settingsString = JSON.stringify(settings, null, 2);
+	let settingsString = $derived(JSON.stringify(settings, null, 2));
 </script>
 
 <div class="mb-4 rounded-lg border border-slate-200 bg-slate-50 shadow-sm">
@@ -39,7 +39,7 @@
 			>
 		</div>
 		<button
-			on:click={() => (showDevSettings = !showDevSettings)}
+			onclick={() => (showDevSettings = !showDevSettings)}
 			class="rounded-md px-2 py-0.5 text-xs font-medium text-blue-600 hover:bg-blue-50 hover:text-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
 		>
 			{showDevSettings ? 'Hide' : 'Show Settings'}

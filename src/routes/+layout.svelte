@@ -1,9 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	import DonateButton from '$lib/DonateButton.svelte';
-	import { onMount } from 'svelte';
 	import { t, locale, locales } from '$lib/i18n.svelte';
-	import { page } from '$app/stores';
 
 	// Import all translations
 	import '../lib/importTranslations';
@@ -29,7 +27,7 @@
 					bind:value={locale.current}
 					class="w-full appearance-none rounded-md bg-blue-100 px-3 py-1 text-sm text-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none"
 				>
-					{#each locales as lang}
+					{#each locales as lang (lang)}
 						<option value={lang}>{languageNames[lang] || lang.toUpperCase()}</option>
 					{/each}
 				</select>

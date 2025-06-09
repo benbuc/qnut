@@ -22,6 +22,7 @@ export class LocalStorage<T> {
 	}
 
 	get current() {
+		// eslint-disable-next-line
 		this.#version;
 
 		let root;
@@ -44,6 +45,7 @@ export class LocalStorage<T> {
 			if (!p) {
 				p = new Proxy(value, {
 					get: (target, property) => {
+						// eslint-disable-next-line
 						this.#version;
 						return proxy(Reflect.get(target, property));
 					},
