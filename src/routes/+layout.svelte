@@ -3,13 +3,24 @@
 	import DonateButton from '$lib/DonateButton.svelte';
 	import { t, locale, locales } from '$lib/i18n.svelte';
 	import '../lib/importTranslations';
+	import { browser } from '$app/environment';
 
 	const languageNames: Record<string, string> = {
 		en: 'English',
 		de: 'Deutsch'
 	};
 
-	let { children } = $props();
+	let { children, data } = $props();
+
+	if (data.userLocale) {
+		locale.current = data.userLocale;
+	}
+
+	function handleLocaleChange(newLocale: string) {
+		if (browser) {
+			document.cookie = `locale=${newLocale};path=/;max-age=${365 * 24 * 60 * 60}`;
+		}
+	}
 </script>
 
 <div class="min-h-screen bg-slate-50 px-4 pt-4 pb-8">
@@ -20,6 +31,7 @@
 			<div class="relative w-24">
 				<select
 					bind:value={locale.current}
+					onchange={(e) => handleLocaleChange(e.currentTarget.value)}
 					class="w-full appearance-none rounded-md bg-blue-100 px-3 py-1 text-sm text-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none"
 				>
 					{#each locales as lang (lang)}
