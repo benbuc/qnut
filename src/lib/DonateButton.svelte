@@ -1,13 +1,10 @@
 <script>
-	// You can customize these props based on your needs
-	export let text = 'Buy me a coffee';
-	export let color = 'blue-600'; // Using your existing color scheme
-	export let size = 'default'; // options: "default", "small", "large"
-	export let variant = 'primary'; // 'primary' (filled) or 'secondary' (outlined)
-
-	// Replace with your actual buymeacoffee username once you create an account
-	// TODO: Username should be configurable through environment variables or config file
-	export let username = 'bebu';
+	let {
+		text = 'Buy me a coffee',
+		color = 'blue-600',
+		size = 'default',
+		variant = 'primary'
+	} = $props();
 
 	// Size classes based on the size prop
 	let sizeClass =
@@ -18,20 +15,19 @@
 				: 'text-sm px-4 py-2';
 
 	// Style based on variant
-	let buttonClass;
-	if (variant === 'primary') {
-		buttonClass = `inline-flex items-center gap-2 rounded-md bg-${color} ${sizeClass} font-medium text-white transition-colors`;
-	} else {
-		buttonClass = `inline-flex items-center gap-2 rounded-md border border-${color} ${sizeClass} text-${color} hover:opacity-60 font-medium transition-colors`;
-	}
-
-	// Generate the donation URL
-	const donationUrl = `https://www.buymeacoffee.com/${username}`;
+	let buttonClass =
+		variant === 'primary'
+			? `inline-flex items-center gap-2 rounded-md bg-${color} ${sizeClass} font-medium text-white transition-colors`
+			: `inline-flex items-center gap-2 rounded-md border border-${color} ${sizeClass} text-${color} hover:opacity-60 font-medium transition-colors`;
 </script>
 
 <div class="donate-container mt-4 mb-4 flex justify-center">
-	<a href={donationUrl} target="_blank" rel="noopener noreferrer" class={buttonClass}>
-		<!-- Coffee cup icon - simplified and more modern -->
+	<a
+		href="https://www.buymeacoffee.com/bebu"
+		target="_blank"
+		rel="noopener noreferrer"
+		class={buttonClass}
+	>
 		<svg
 			width="20"
 			height="20"

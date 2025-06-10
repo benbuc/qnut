@@ -1,13 +1,8 @@
 <script lang="ts">
-	import { settings } from './settings.svelte';
 	import CalculationMethodToggle from './CalculationMethodToggle.svelte';
 	import NormalizationToggle from './NormalizationToggle.svelte';
 
-	// Whether to show the dev settings panel
 	let showDevSettings = $state(false);
-
-	// Local copies for debugging display
-	let settingsString = $derived(JSON.stringify(settings, null, 2));
 </script>
 
 <div class="mb-4 rounded-lg border border-slate-200 bg-slate-50 shadow-sm">
@@ -34,9 +29,6 @@
 				/>
 			</svg>
 			<span class="text-sm font-medium text-slate-700">Visualization Settings</span>
-			<span class="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-800"
-				>DEV ONLY</span
-			>
 		</div>
 		<button
 			onclick={() => (showDevSettings = !showDevSettings)}
@@ -51,14 +43,6 @@
 			<div class="space-y-3">
 				<CalculationMethodToggle />
 				<NormalizationToggle />
-
-				{#if import.meta.env.DEV}
-					<div class="mt-4 rounded border border-slate-200 bg-slate-50 p-2">
-						<div class="mb-1 text-[10px] font-medium text-slate-500">Current Settings:</div>
-						<pre
-							class="overflow-x-auto rounded bg-slate-800 p-2 text-[10px] text-green-400">{settingsString}</pre>
-					</div>
-				{/if}
 			</div>
 		</div>
 	{/if}

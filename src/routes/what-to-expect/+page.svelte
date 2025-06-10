@@ -9,8 +9,6 @@
 	onMount(() => {
 		// Generate test data to show what an imbalanced wheel looks like
 		const testBuckets = generateTestData();
-
-		// Set the speedBuckets to trigger the canvas to render
 		speedBuckets = testBuckets;
 	});
 </script>

@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { register } from '$lib/server/metrics';
 
+// This route is hidden from the public through the Traefik configuration
 export async function GET() {
 	try {
 		// Return metrics in Prometheus format

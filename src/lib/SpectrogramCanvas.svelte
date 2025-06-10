@@ -12,7 +12,6 @@
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
 
-	// Export function to get canvas for downloading
 	export function getCanvas(): HTMLCanvasElement | null {
 		return canvas || null;
 	}
@@ -21,7 +20,6 @@
 		if (!canvas) return;
 		ctx = canvas.getContext('2d')!;
 
-		// Make canvas square based on its container width
 		const rect = canvas.getBoundingClientRect();
 		// TODO: Magic number 400 for max canvas size should be configurable
 		const size = Math.min(rect.width, 400); // Max size of 400px

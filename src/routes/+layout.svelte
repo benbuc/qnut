@@ -2,15 +2,11 @@
 	import '../app.css';
 	import DonateButton from '$lib/DonateButton.svelte';
 	import { t, locale, locales } from '$lib/i18n.svelte';
-
-	// Import all translations
 	import '../lib/importTranslations';
 
-	// Define language display names
 	const languageNames: Record<string, string> = {
 		en: 'English',
 		de: 'Deutsch'
-		// Add more languages here in the future
 	};
 
 	let { children } = $props();
@@ -20,7 +16,6 @@
 	<header class="mb-6">
 		<div class="mb-2 flex items-center justify-between">
 			<div class="w-24"></div>
-			<!-- Spacer for alignment -->
 			<h1 class="text-center text-3xl font-bold text-blue-600">Qnut</h1>
 			<div class="relative w-24">
 				<select

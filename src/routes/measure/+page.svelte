@@ -4,7 +4,7 @@
 	import SpectrogramCanvas from '$lib/SpectrogramCanvas.svelte';
 	import { dev } from '$app/environment';
 	import { t } from '$lib/i18n.svelte';
-	import { AccelerationCapture } from '$lib/accelerationCapture.svelte';
+	import { AccelerationCapture, GPS_ACCURACY_THRESHOLD } from '$lib/accelerationCapture.svelte';
 
 	const cap = new AccelerationCapture();
 
@@ -76,8 +76,8 @@
 		</div>
 		{#if cap.gpsAccuracy > 0}
 			<div
-				class:text-yellow-600={cap.gpsAccuracy > cap.accuracyThreshold}
-				class:text-green-600={cap.gpsAccuracy <= cap.accuracyThreshold}
+				class:text-yellow-600={cap.gpsAccuracy > GPS_ACCURACY_THRESHOLD}
+				class:text-green-600={cap.gpsAccuracy <= GPS_ACCURACY_THRESHOLD}
 				class="text-sm"
 			>
 				{t('measure:measure.gpsAccuracy', { accuracy: cap.gpsAccuracy.toFixed(1) })}

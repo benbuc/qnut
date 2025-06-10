@@ -1,6 +1,9 @@
 import { getSpeedBucket, applyFFT, BUFFER_SIZE } from './spectrogram';
 import { t } from './i18n.svelte';
 
+export const GPS_ACCURACY_THRESHOLD = 15; // Accuracy threshold for GPS in meters
+export const MEASUREMENTS_PER_ROW = 50; // Number of measurements per row in the spectrogram
+
 export class AccelerationCapture {
 	currentSpeed: number = $state(-1);
 	gpsAccuracy: number = $state(-1);
@@ -12,29 +15,28 @@ export class AccelerationCapture {
 	private buffer: number[] = [];
 	private motionListenerActive: boolean = false;
 	private geoWatchId: number | null = null;
-	// TODO: Make accuracy threshold configurable instead of hardcoded
-	accuracyThreshold: number = 20;
 
 	private handleMotion = (event: DeviceMotionEvent) => {
 		const acc = event.acceleration;
 		if (!acc || acc.x === null || acc.y === null || acc.z === null) return;
+		if (this.currentSpeed < 0 || this.gpsAccuracy > GPS_ACCURACY_THRESHOLD) {
+			// Discard measurement if speed is unavailable or GPS accuracy is too low
+			this.buffer = [];
+			return;
+		}
 
+		// TODO: For future algorithmic improvements
+		// using the magnitude so early loses a lot of information, right?
+		// Consider how a rotating vibration would result in a constant magnitude
+		// while the individual axis clearly show vibrations.
+		// An idea would be to take the FFT of each axis separately,
+		// and combine them afterwards.
 		const magnitude = Math.sqrt(acc.x ** 2 + acc.y ** 2 + acc.z ** 2);
 		this.buffer.push(magnitude);
 
 		if (this.buffer.length < BUFFER_SIZE) return;
-		if (this.currentSpeed < 0) {
-			this.buffer = [];
-			return;
-		}
 
-		// Skip measurements with bad GPS accuracy
-		if (this.gpsAccuracy > this.accuracyThreshold) {
-			this.buffer = [];
-			return;
-		}
-
-		const magnitudes = applyFFT(this.buffer);
+		const spectrum = applyFFT(this.buffer);
 
 		const bucket = getSpeedBucket(this.currentSpeed);
 
@@ -42,19 +44,22 @@ export class AccelerationCapture {
 			this.speedBuckets.set(bucket, []);
 		}
 
-		this.speedBuckets.get(bucket)!.push(magnitudes);
+		this.speedBuckets.get(bucket)!.push(spectrum);
 
 		// Sort the bucket based on the first column (index 0) of each measurement
-		// Lower values in the first column indicate better quality
+		// Lower values in the first column indicate better quality.
+		// Based on the assumption that a constant acceleration will skew the measurement
+		// and constant acceleration will result in a higher first column (DC column) after FFT
 		const sortedBucket = this.speedBuckets.get(bucket)!.sort((a, b) => a[0] - b[0]);
 
-		// TODO: Make max measurements per bucket configurable instead of hardcoded 20
-		if (sortedBucket.length > 20) {
-			sortedBucket.splice(20);
+		// Only keep best measurements
+		if (sortedBucket.length > MEASUREMENTS_PER_ROW) {
+			sortedBucket.splice(MEASUREMENTS_PER_ROW);
 		}
 
 		this.buffer = [];
 
+		// TODO: test whether this is needed for reactivity or obsolete in Svelte 5
 		this.speedBuckets = new Map(this.speedBuckets);
 	};
 
@@ -83,7 +88,8 @@ export class AccelerationCapture {
 
 			if (result) {
 				this.measuring = true;
-				// TODO: Add error handling for metrics endpoint failure - should not block measurement
+
+				// Notify telemetry of new measurement
 				fetch('/api/metrics/increment', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
@@ -109,7 +115,7 @@ export class AccelerationCapture {
 		if (this.geoWatchId !== null) {
 			navigator.geolocation.clearWatch(this.geoWatchId);
 			this.geoWatchId = null;
-			this.gpsAccuracy = -1; // Reset GPS accuracy when stopping
+			this.gpsAccuracy = -1;
 		}
 	}
 
@@ -136,10 +142,11 @@ export class AccelerationCapture {
 					this.gpsAccuracy = pos.coords.accuracy;
 
 					if (pos.coords.speed !== undefined && pos.coords.speed !== null) {
-						// TODO: Magic number 3.6 for m/s to km/h conversion should be a named constant
+						// Convert to km/h
+						// TODO: Configurable for international users
 						this.currentSpeed = Math.max(0, pos.coords.speed * 3.6);
 
-						if (pos.coords.accuracy > this.accuracyThreshold) {
+						if (pos.coords.accuracy > GPS_ACCURACY_THRESHOLD) {
 							this.warningMsg = t('measure:error.noSpeed');
 						} else {
 							this.warningMsg = '';
@@ -158,7 +165,6 @@ export class AccelerationCapture {
 				{
 					enableHighAccuracy: true,
 					maximumAge: 0,
-					// TODO: Make timeout configurable instead of hardcoded 5000ms
 					timeout: 5000
 				}
 			);
@@ -168,10 +174,5 @@ export class AccelerationCapture {
 			this.errorMsg = `Error requesting motion permission: ${error}`;
 			return false;
 		}
-	}
-
-	public clearData(): void {
-		this.speedBuckets = new Map();
-		this.buffer = [];
 	}
 }
