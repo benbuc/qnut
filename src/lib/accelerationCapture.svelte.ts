@@ -12,7 +12,7 @@ export class AccelerationCapture {
 	errorMsg: string = $state('');
 	warningMsg: string = $state('');
 
-	private buffer: number[] = [];
+	private buffer: { x: number; y: number; z: number }[] = [];
 	private motionListenerActive: boolean = false;
 	private geoWatchId: number | null = null;
 
@@ -25,18 +25,20 @@ export class AccelerationCapture {
 			return;
 		}
 
-		// TODO: For future algorithmic improvements
-		// using the magnitude so early loses a lot of information, right?
-		// Consider how a rotating vibration would result in a constant magnitude
-		// while the individual axis clearly show vibrations.
-		// An idea would be to take the FFT of each axis separately,
-		// and combine them afterwards.
-		const magnitude = Math.sqrt(acc.x ** 2 + acc.y ** 2 + acc.z ** 2);
-		this.buffer.push(magnitude);
+		this.buffer.push({ x: acc.x, y: acc.y, z: acc.z });
 
 		if (this.buffer.length < BUFFER_SIZE) return;
 
-		const spectrum = applyFFT(this.buffer);
+		const spectrumX = applyFFT(this.buffer.map((v) => v.x));
+		const spectrumY = applyFFT(this.buffer.map((v) => v.y));
+		const spectrumZ = applyFFT(this.buffer.map((v) => v.z));
+		const spectrum = spectrumX.map((valX, index) => {
+			const valY = spectrumY[index];
+			const valZ = spectrumZ[index];
+			// Combine the FFT results of all three axes
+			// by using the maximum frequency bin
+			return Math.max(valX, valY, valZ);
+		});
 
 		const bucket = getSpeedBucket(this.currentSpeed);
 
