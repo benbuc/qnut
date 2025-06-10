@@ -51,12 +51,12 @@
 		<span class="text-2xl">⚠️</span>
 		<div>
 			<h4 class="mb-2 font-bold text-red-800">{t('home:safety.title')}</h4>
-			<ul class="space-y-1 text-sm text-red-700">
-				<li>• <strong>{t('home:safety.never')}</strong></li>
-				<li>• {t('home:safety.passenger')}</li>
-				<li>• {t('home:safety.mount')}</li>
-				<li>• {t('home:safety.drive')}</li>
-				<li>• {t('home:safety.professional')}</li>
+			<ul class="list-disc space-y-1 pl-5 text-sm text-red-700">
+				<li><strong>{t('home:safety.never')}</strong></li>
+				<li>{t('home:safety.passenger')}</li>
+				<li>{t('home:safety.mount')}</li>
+				<li>{t('home:safety.drive')}</li>
+				<li>{t('home:safety.professional')}</li>
 			</ul>
 		</div>
 	</div>
@@ -85,11 +85,11 @@
 <!-- Requirements Section -->
 <div class="mb-8 rounded-lg bg-blue-50 p-4">
 	<h4 class="mb-3 font-semibold text-blue-800">{t('home:req.title')}</h4>
-	<ul class="space-y-1 text-sm text-blue-700">
-		<li>• {t('home:req.smartphone')}</li>
-		<li>• {t('home:req.gps')}</li>
-		<li>• {t('home:req.mount')}</li>
-		<li>• {t('home:req.passenger')}</li>
+	<ul class="list-disc space-y-1 pl-5 text-sm text-blue-700">
+		<li>{t('home:req.smartphone')}</li>
+		<li>{t('home:req.gps')}</li>
+		<li>{t('home:req.mount')}</li>
+		<li>{t('home:req.passenger')}</li>
 	</ul>
 </div>
 

@@ -69,12 +69,12 @@
 			<span class="text-2xl">🔍</span>
 			<div>
 				<h4 class="mb-2 font-semibold text-green-800">{t('what-to-expect:why.title')}</h4>
-				<p class="text-sm text-green-700">
-					• {@html t('what-to-expect:why.point1')}<br />
-					• {@html t('what-to-expect:why.point2')}<br />
-					• {@html t('what-to-expect:why.point3')}<br />
-					• {@html t('what-to-expect:why.point4')}
-				</p>
+				<ul class="list-disc pl-5 text-sm text-green-700">
+					<li>{@html t('what-to-expect:why.point1')}</li>
+					<li>{@html t('what-to-expect:why.point2')}</li>
+					<li>{@html t('what-to-expect:why.point3')}</li>
+					<li>{@html t('what-to-expect:why.point4')}</li>
+				</ul>
 			</div>
 		</div>
 	</div>
@@ -84,11 +84,11 @@
 			<span class="text-2xl">⚡</span>
 			<div>
 				<h4 class="mb-2 font-semibold text-amber-800">{t('what-to-expect:colors.title')}</h4>
-				<p class="text-sm text-amber-700">
-					• {@html t('what-to-expect:colors.point1')}<br />
-					• {@html t('what-to-expect:colors.point2')}<br />
-					• {@html t('what-to-expect:colors.point3')}
-				</p>
+				<ul class="list-disc pl-5 text-sm text-amber-700">
+					<li>{@html t('what-to-expect:colors.point1')}</li>
+					<li>{@html t('what-to-expect:colors.point2')}</li>
+					<li>{@html t('what-to-expect:colors.point3')}</li>
+				</ul>
 			</div>
 		</div>
 	</div>
